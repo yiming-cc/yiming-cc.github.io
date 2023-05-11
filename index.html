@@ -71,6 +71,122 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-文远知行面试总结" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/05/11/%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" class="article-date">
+  <time class="dt-published" datetime="2023-05-11T03:23:15.000Z" itemprop="datePublished">2023-05-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/05/11/%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/">文远知行面试总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>第一次面试大公司，学到了很多东西，在这里进行一个总结。</p>
+<p>面试岗位：地图与定位研发实习生</p>
+<h2 id="一面"><a href="#一面" class="headerlink" title="一面"></a>一面</h2><p>一面的内容比较简单，询问了一些项目的基本信息，问的不深入，基本浮于表面，大概就想知道简历上的项目是不是你自己做的。</p>
+<p>然后还询问了一些C++的基本知识，包括多态和多线程编程。</p>
+<p>最后考了一个coding，如果没有思路可以让面试官给提示。</p>
+<h2 id="二面"><a href="#二面" class="headerlink" title="二面"></a>二面</h2><p>二面的内容主要是简历项目，对项目进行十分细致的询问，面试官一般是投递部门的成员，所以对相关技术了解深刻，他希望明白项目的整体流程以及使用的技术，并询问一些项目中的细节问题。</p>
+<p>这一部分的面试准备的不好，虽然hr说了二面以项目为主，我还是把重心放在了slam的基础知识上，包括非线性优化的公式推导，直接法的公式推导等，特征点提取的原理与细节（但是实际上都没问）。</p>
+<p>所以这一步面试的重点应该是项目细节。</p>
+<ol>
+<li>应该提前构思好项目中的闪光点（我没有提前构思，然后讲述的就十分的平淡）；</li>
+<li>项目进行的整体流程，遇到了哪些问题，如何解决的（这个部分十分重要，我因为没有提前构思，导致说出的问题都比较toy，没有让面试官满意）；</li>
+<li>项目涉及的相关技术，都要十分熟悉（这部分也很重要，因为我的系统中涉及了融合imu传感器，但是面试官询问的时候，我对imu的理解只浮于表面，实际工程上的很多问题都答不上来）</li>
+</ol>
+<p>以上种种，导致了我面试失利。不过是第一次面试，也算是一次十分宝贵的经验，吸取教训！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/05/11/%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" data-id="clhiktp700000uktw0i6l13wt" data-title="文远知行面试总结" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-计网实验" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/" class="article-date">
+  <time class="dt-published" datetime="2023-05-09T11:46:46.000Z" itemprop="datePublished">2023-05-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/">计网实验</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在这里进行一些计网实验的总结，防止知识的迅速遗忘。</p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="两个ip之间的通信"><a href="#两个ip之间的通信" class="headerlink" title="两个ip之间的通信"></a>两个ip之间的通信</h3><p>只有处于同一个网段间的ip地址才可以直接相互通信，如果两个ip地址属于不同网段，则需要通过路由器进行通信，一般包括下面几个步骤：</p>
+<ol>
+<li><p>PC0发现目标ip不在自身网段，则将数据转发给网关；</p>
+</li>
+<li><p>网关一般用一个ip地址表示，一般是路由器的一个interface的ip地址，即PC0会将数据转发给路由器；</p>
+</li>
+<li><p>路由器内具有路由表，且一个路由器的所有interface是相互连通的（尽管interface的ip可能不处于一个网段）；</p>
+</li>
+<li><p>如果路由器的某个interface处于目标ip网段，则可以通过该interface进行转发；如果路由器所有端口都不处于目标ip网段，则可以通过<strong>配置静态路由</strong>等方式进行路由；</p>
+<p>这里需要注意的是，ip之间要能相互通信，则不仅要能够到达目的ip，目的ip也要能回到源ip（并没有原路返回的规则），故静态ip的配置可能需要配两边。</p>
+</li>
+</ol>
+<h3 id="NAT-Network-Access-Translation-技术"><a href="#NAT-Network-Access-Translation-技术" class="headerlink" title="NAT(Network Access Translation)技术"></a>NAT(Network Access Translation)技术</h3><p>该技术允许<strong>一个整体机构</strong>以<strong>一个公有ip地址</strong>出现在Internet上，节约了ip地址空间。</p>
+<p><img src="D:\Note\img\image-20230509204833850.png" alt="image-20230509204833850"></p>
+<h4 id="私有IP地址"><a href="#私有IP地址" class="headerlink" title="私有IP地址"></a>私有IP地址</h4><p>私有IP地址是从原有的IP V4地址中，专门规划出几段保留的IP地址，只能使用在局域网的私有网络环境中，不能在Internet上是不使用。<strong>安装在Internet网络中的路由器，不转发带有私有IP地址数据包</strong>。因此私有ip必须转化为公有ip才能在Internet上传输。</p>
+<p>主要有三个范围的私有IP地址：</p>
+<blockquote>
+<p>A: 10.0.0.0~10.255.255.255; 即 10.0.0.0&#x2F;8</p>
+<p>B: 172.16.0.0~172.31.255.255; 即 172.16.0.0&#x2F;12</p>
+<p>C: 192.168.0.0~192.168.255.255; 即 192.168.0.0&#x2F;16</p>
+</blockquote>
+<h2 id="vlan虚接口"><a href="#vlan虚接口" class="headerlink" title="vlan虚接口"></a>vlan虚接口</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int vlan &#123;k&#125;</span><br><span class="line">ip address &#123;ip addr&#125; &#123;掩码&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式创建vlan虚接口并设置其ip地址。</p>
+<p>vlan虚接口主要是为了实现一个vlan内多个网段互联。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/" data-id="clhiktp7e0001uktwejf30e1v" data-title="计网实验" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-model环境踩坑" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/05/01/model%E7%8E%AF%E5%A2%83%E8%B8%A9%E5%9D%91/" class="article-date">
@@ -201,6 +317,14 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2023/05/11/%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/">文远知行面试总结</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/">计网实验</a>
+          </li>
         
           <li>
             <a href="/2023/05/01/model%E7%8E%AF%E5%A2%83%E8%B8%A9%E5%9D%91/">docker搭建diffusion model环境踩坑</a>

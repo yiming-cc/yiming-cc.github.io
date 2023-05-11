@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>计网实验 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="在这里进行一些计网实验的总结，防止知识的迅速遗忘。 基础知识两个ip之间的通信只有处于同一个网段间的ip地址才可以直接相互通信，如果两个ip地址属于不同网段，则需要通过路由器进行通信，一般包括下面几个步骤：  PC0发现目标ip不在自身网段，则将数据转发给网关；  网关一般用一个ip地址表示，一般是路由器的一个interface的ip地址，即PC0会将数据转发给路由器；  路由器内具有路由表，且一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计网实验">
+<meta property="og:url" content="http://example.com/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="在这里进行一些计网实验的总结，防止知识的迅速遗忘。 基础知识两个ip之间的通信只有处于同一个网段间的ip地址才可以直接相互通信，如果两个ip地址属于不同网段，则需要通过路由器进行通信，一般包括下面几个步骤：  PC0发现目标ip不在自身网段，则将数据转发给网关；  网关一般用一个ip地址表示，一般是路由器的一个interface的ip地址，即PC0会将数据转发给路由器；  路由器内具有路由表，且一">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="d:\Note\img\image-20230509204833850.png">
+<meta property="article:published_time" content="2023-05-09T11:46:46.000Z">
+<meta property="article:modified_time" content="2023-05-11T03:20:26.000Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:\Note\img\image-20230509204833850.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-计网实验" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/" class="article-date">
+  <time class="dt-published" datetime="2023-05-09T11:46:46.000Z" itemprop="datePublished">2023-05-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      计网实验
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>在这里进行一些计网实验的总结，防止知识的迅速遗忘。</p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="两个ip之间的通信"><a href="#两个ip之间的通信" class="headerlink" title="两个ip之间的通信"></a>两个ip之间的通信</h3><p>只有处于同一个网段间的ip地址才可以直接相互通信，如果两个ip地址属于不同网段，则需要通过路由器进行通信，一般包括下面几个步骤：</p>
+<ol>
+<li><p>PC0发现目标ip不在自身网段，则将数据转发给网关；</p>
+</li>
+<li><p>网关一般用一个ip地址表示，一般是路由器的一个interface的ip地址，即PC0会将数据转发给路由器；</p>
+</li>
+<li><p>路由器内具有路由表，且一个路由器的所有interface是相互连通的（尽管interface的ip可能不处于一个网段）；</p>
+</li>
+<li><p>如果路由器的某个interface处于目标ip网段，则可以通过该interface进行转发；如果路由器所有端口都不处于目标ip网段，则可以通过<strong>配置静态路由</strong>等方式进行路由；</p>
+<p>这里需要注意的是，ip之间要能相互通信，则不仅要能够到达目的ip，目的ip也要能回到源ip（并没有原路返回的规则），故静态ip的配置可能需要配两边。</p>
+</li>
+</ol>
+<h3 id="NAT-Network-Access-Translation-技术"><a href="#NAT-Network-Access-Translation-技术" class="headerlink" title="NAT(Network Access Translation)技术"></a>NAT(Network Access Translation)技术</h3><p>该技术允许<strong>一个整体机构</strong>以<strong>一个公有ip地址</strong>出现在Internet上，节约了ip地址空间。</p>
+<p><img src="D:\Note\img\image-20230509204833850.png" alt="image-20230509204833850"></p>
+<h4 id="私有IP地址"><a href="#私有IP地址" class="headerlink" title="私有IP地址"></a>私有IP地址</h4><p>私有IP地址是从原有的IP V4地址中，专门规划出几段保留的IP地址，只能使用在局域网的私有网络环境中，不能在Internet上是不使用。<strong>安装在Internet网络中的路由器，不转发带有私有IP地址数据包</strong>。因此私有ip必须转化为公有ip才能在Internet上传输。</p>
+<p>主要有三个范围的私有IP地址：</p>
+<blockquote>
+<p>A: 10.0.0.0~10.255.255.255; 即 10.0.0.0&#x2F;8</p>
+<p>B: 172.16.0.0~172.31.255.255; 即 172.16.0.0&#x2F;12</p>
+<p>C: 192.168.0.0~192.168.255.255; 即 192.168.0.0&#x2F;16</p>
+</blockquote>
+<h2 id="vlan虚接口"><a href="#vlan虚接口" class="headerlink" title="vlan虚接口"></a>vlan虚接口</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int vlan &#123;k&#125;</span><br><span class="line">ip address &#123;ip addr&#125; &#123;掩码&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式创建vlan虚接口并设置其ip地址。</p>
+<p>vlan虚接口主要是为了实现一个vlan内多个网段互联。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/" data-id="clhiktp7e0001uktwejf30e1v" data-title="计网实验" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2023/05/11/%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          文远知行面试总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2023/05/01/model%E7%8E%AF%E5%A2%83%E8%B8%A9%E5%9D%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">docker搭建diffusion model环境踩坑</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/05/11/%E6%96%87%E8%BF%9C%E7%9F%A5%E8%A1%8C%E9%9D%A2%E8%AF%95%E6%80%BB%E7%BB%93/">文远知行面试总结</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/09/%E8%AE%A1%E7%BD%91%E5%AE%9E%E9%AA%8C/">计网实验</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/01/model%E7%8E%AF%E5%A2%83%E8%B8%A9%E5%9D%91/">docker搭建diffusion model环境踩坑</a>
+          </li>
+        
+          <li>
+            <a href="/2023/05/01/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -209,6 +209,10 @@
 
 <!-- toc -->
 
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
 <section class="px-6 max-w-prose mx-auto md:px-0">
   <!-- header -->
   <header class="overflow-hidden pt-6 pb-6 md:pt-12">
@@ -230,7 +234,7 @@
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
-            <span>0 words</span>
+            <span>268 words</span>
           </span>
           
         </section>
@@ -239,7 +243,13 @@
   </header>
   <!-- content -->
   <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
-    
+    <p><strong>渲染（render）</strong>，指以 3D 空间中排列的许多几何物体组成的场景为背景，计算出从特定视点看到的物体的 2D 图像。渲染通常有两种组织方式：</p>
+<ul>
+<li>以物体为导向的渲染（<em>object-order rendering</em>）：考虑每个物体（基元，primitive）对其占据的所有像素的影响，简单来说即外层循环为物体。这种方式通常更加高效。e.g 3DGS使用的光栅化渲染算法。</li>
+<li>以像素为导向的渲染（<em>image-order rendering</em>）：考虑每个像素受到的所有物体的影响，简单来说即外层循环为像素。这种方式通常更容易实现并且更灵活。e.g NeRF使用的光线追踪（ray tracing）算法。</li>
+</ul>
+<p><strong>光栅化（rasterize）</strong>，指找到图像中被某几何基元（e.g triangle face）影响的所有像素的过程。以物体为导向的渲染又称为通过光栅化渲染（rendering by rasterization）。</p>
+<h3 id="NeRF-渲染技术详解"><a href="#NeRF-渲染技术详解" class="headerlink" title="NeRF 渲染技术详解"></a>NeRF 渲染技术详解</h3><h3 id="3DGS-渲染技术详解"><a href="#3DGS-渲染技术详解" class="headerlink" title="3DGS 渲染技术详解"></a>3DGS 渲染技术详解</h3><h3 id="扩展一：-Gaussian-Opacity-Field"><a href="#扩展一：-Gaussian-Opacity-Field" class="headerlink" title="扩展一： Gaussian Opacity Field"></a>扩展一： Gaussian Opacity Field</h3><h3 id="扩展二：-DMesh"><a href="#扩展二：-DMesh" class="headerlink" title="扩展二： DMesh"></a>扩展二： DMesh</h3>
   </article>
   <!-- tag -->
   <div class="mt-12 pt-6 border-t border-gray-200">

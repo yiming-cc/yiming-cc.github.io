@@ -224,17 +224,17 @@
         <section class="flex items-center gap-3 text-sm">
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
-            <time>2024-08-11</time>
+            <time>2024-08-26</time>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
-            <span>1 min</span>
+            <span>25 min</span>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
-            <span>2 words</span>
+            <span>6.4k words</span>
           </span>
           
         </section>
@@ -243,7 +243,298 @@
   </header>
   <!-- content -->
   <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
-    <h1 id="git-tutorial"><a href="#git-tutorial" class="headerlink" title="git tutorial"></a>git tutorial</h1><p><img src="/2024/08/11/hello-world/test.png"></p>
+    <h2 id="git对信息的存储方式"><a href="#git对信息的存储方式" class="headerlink" title="git对信息的存储方式"></a>git对信息的存储方式</h2><h3 id="直接记录快照，而非差异比较"><a href="#直接记录快照，而非差异比较" class="headerlink" title="直接记录快照，而非差异比较"></a>直接记录快照，而非差异比较</h3><p>与<strong>基于差异</strong>的版本控制系统不同<a href="%E8%BF%99%E7%A7%8D%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E4%BB%A5%E6%96%87%E4%BB%B6%E5%8F%98%E6%9B%B4%E5%88%97%E8%A1%A8%E7%9A%84%E6%96%B9%E5%BC%8F%E5%AD%98%E5%82%A8%E4%BF%A1%E6%81%AF">^1</a>，Git把数据看作是对小型文件系统的一系列快照。</p>
+<p>在 Git 中，每当你提交更新或保存项目状态时，它基本上就会<strong>对当时的全部文件创建一个快照并保存这个快照的索引</strong>。 为了效率，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。下面两个图表示了两种方式的差异：</p>
+<p><img src="/2024/08/11/hello-world/image-20211216221448666.png" alt="存储文件差异"></p>
+<p><img src="/2024/08/11/hello-world/image-20211216221459462.png" alt="存储文件快照"></p>
+<h3 id="近乎所有操作都是本地执行的"><a href="#近乎所有操作都是本地执行的" class="headerlink" title="近乎所有操作都是本地执行的"></a>近乎所有操作都是本地执行的</h3><p>在 Git 中的绝大多数操作都只需要访问本地文件和资源，一般不需要来自网络上其它计算机的信息。即Git将文件快照存储在本地数据库内，这样大大减少了与远程服务器连接的时间开销。（更加消耗了本地的内存？）</p>
+<h3 id="三种状态"><a href="#三种状态" class="headerlink" title="三种状态"></a>三种状态</h3><p><strong>已提交（committed）</strong>、<strong>已修改（modified）</strong> 和 <strong>已暂存（staged）</strong>。</p>
+<ul>
+<li><p><strong>已修改</strong>表示修改了文件，但还没保存到数据库中。</p>
+</li>
+<li><p><strong>已暂存</strong>表示对一个已修改文件的当前版本做了标记，使之包含在下次提交的快照中。</p>
+</li>
+<li><p><strong>已提交</strong>表示数据已经安全地保存在本地数据库中。</p>
+</li>
+</ul>
+<p>这会让我们的 Git 项目拥有三个阶段：工作区、暂存区以及 Git 目录。</p>
+<p><img src="/2024/08/11/hello-world/image-20211217082417848.png" alt="image-20211217082417848"></p>
+<p>基本的 Git 工作流程如下： </p>
+<ol>
+<li>在工作区中修改文件。 </li>
+<li>将你想要下次提交的更改选择性地暂存，这样只会将更改的部分添加到暂存区。 </li>
+<li>提交更新，找到暂存区的文件，将快照永久性存储到 Git 目录。</li>
+</ol>
+<h2 id="初次运行Git前的配置"><a href="#初次运行Git前的配置" class="headerlink" title="初次运行Git前的配置"></a>初次运行Git前的配置</h2><p>Git 自带一个 git config 的工具来帮助设置控制 Git 外观和行为的配置变量。 这些变量存储在三个不同的位 置： </p>
+<ol>
+<li><p><code>/etc/gitconfig</code> 文件: 包含系统上每一个用户及他们仓库的通用配置。 如果在执行 git config 时带上 –system 选项，那么它就会读写该文件中的配置变量。 （由于它是系统配置文件，因此你需要管理员或 超级用户权限来修改它。） </p>
+</li>
+<li><p><code>~/.gitconfig</code> 或 <code>~/.config/git/config</code> 文件：只针对当前用户。 你可以传递 –global 选项让 Git 读写此文件，这会对你系统上 所有 的仓库生效。 </p>
+</li>
+<li><p>当前使用仓库的 Git 目录中的 config 文件（即 <code>.git/config</code>）：针对该仓库。 你可以传递 –local 选 项让 Git 强制读写此文件，虽然默认情况下用的就是它。（当然，你需要进入某个 Git 仓库中才能让该选项生效。）</p>
+</li>
+</ol>
+<p><strong>每一个级别会覆盖上一级别的配置</strong>，所以 <code>.git/config</code> 的配置变量会覆盖 <code>/etc/gitconfig</code> 中的配置变量。（类似<code>vscode</code>中的层级设置    默认设置–&gt;全局设置–&gt;工作区设置）</p>
+<p>使用以下命令查看所有的配置以及他们所在的文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --list --show-origin</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户信息"><a href="#用户信息" class="headerlink" title="用户信息"></a>用户信息</h3><p>设置用户名和邮件地址。每一次Git提交都会使用这些信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;cym&quot; </span><br><span class="line">git config --global user.email 2923784829@qq.com</span><br></pre></td></tr></table></figure>
+
+<p>注：**–global** 修改的是全局设置，之后无论在哪个系统上做任何事，Git 都会使用该设置，但可以通过修改某仓库下的设置来覆盖该设置。</p>
+<h3 id="检查配置信息"><a href="#检查配置信息" class="headerlink" title="检查配置信息"></a>检查配置信息</h3><p>列出 Git 能找到的所有配置（从全局设置与仓库设置读取，可能存在重复变量，Git 根据优先级来处理他们）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --list </span><br></pre></td></tr></table></figure>
+
+<p>检查 Git 的某一项配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config &lt;key&gt;</span><br></pre></td></tr></table></figure>
+
+<p>​	</p>
+<h2 id="Git-基础"><a href="#Git-基础" class="headerlink" title="Git 基础"></a>Git 基础</h2><h3 id="获取-Git-仓库"><a href="#获取-Git-仓库" class="headerlink" title="获取 Git 仓库"></a>获取 Git 仓库</h3><p>通常有两种方式</p>
+<ol>
+<li>将尚未进行版本控制的本地目录转换为 Git 仓库； </li>
+<li>从其它服务器 克隆 一个已存在的 Git 仓库。</li>
+</ol>
+<h4 id="在已存在的目录中初始化仓库"><a href="#在已存在的目录中初始化仓库" class="headerlink" title="在已存在的目录中初始化仓库"></a>在已存在的目录中初始化仓库</h4><p>进入对应的目录，执行以下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git init</span><br></pre></td></tr></table></figure>
+
+<p>该命令将创建一个<code>.git</code>的子目录，这个子目录含有你初始化的 Git 仓库中所有的必须文件，这些文件是 Git 仓库的骨干。但此时只是做了一个初始化的操作，<strong>项目内的文件还没有被跟踪</strong>。</p>
+<h4 id="克隆现有的仓库"><a href="#克隆现有的仓库" class="headerlink" title="克隆现有的仓库"></a>克隆现有的仓库</h4><p><code>progit</code> p35</p>
+<h3 id="记录每次更新到仓库"><a href="#记录每次更新到仓库" class="headerlink" title="记录每次更新到仓库"></a>记录每次更新到仓库</h3><p>工作目录下的文件都处于两种状态：<strong>已跟踪</strong>或<strong>未跟踪</strong>。</p>
+<ul>
+<li>已跟踪的文件指那些已经被纳入版本控制的文件，它们的状态是未修改、已修改或已放入暂存区。</li>
+<li>未跟踪的文件指项目中除了已跟踪的文件的其他文件。</li>
+</ul>
+<p>注：<strong>初始化本地仓库后所有文件都是未跟踪的，而克隆现有仓库后所有文件都是已跟踪的。</strong></p>
+<h4 id="检查当前文件的状态"><a href="#检查当前文件的状态" class="headerlink" title="检查当前文件的状态"></a>检查当前文件的状态</h4><p>使用命令 <code>git status</code> 来查看当前仓库哪些文件处于什么状态。注：一定要在 Git 仓库（初始化后的仓库或者克隆的仓库）内执行该命令。</p>
+<p>当我们在 Git 仓库中新增文件时，默认情况下<strong>新增文件都是未跟踪的</strong>。下例中新增的<code>README</code>文件没有被跟踪。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; <span class="built_in">echo</span> <span class="string">&#x27;vgaproject&#x27;</span> &gt; README</span><br><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git status</span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Untracked files:</span><br><span class="line">  (use <span class="string">&quot;git add &lt;file&gt;...&quot;</span> to include <span class="keyword">in</span> what will be committed)</span><br><span class="line">        README</span><br><span class="line">        VGA.cache/</span><br><span class="line">        VGA.hw/</span><br><span class="line">        VGA.ip_user_files/</span><br><span class="line">        VGA.runs/</span><br><span class="line">        VGA.sim/</span><br><span class="line">        VGA.srcs/</span><br><span class="line">        VGA.xpr</span><br><span class="line">        xilinx.com_user_Divider_1.<span class="number">0</span>/</span><br></pre></td></tr></table></figure>
+
+<p><code>Untracked files</code>指文件没有被跟踪。<code>No commits yet</code>指修改还没有被提交。</p>
+<h4 id="跟踪新文件"><a href="#跟踪新文件" class="headerlink" title="跟踪新文件"></a>跟踪新文件</h4><p>使用命令 <code>git add &lt;files&gt;</code> 来跟踪一个新文件。如果参数是目录的路径，该命令将递归地跟踪该<strong>目录下的所有文件</strong>。</p>
+<p>使用该命令跟踪后的文件会处于暂存区。如我向 <code>VGA</code> 仓库内 <code>add</code> 一个 <code>README</code> 文件。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git add README</span><br><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git status</span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Changes to be committed:</span><br><span class="line">  (use <span class="string">&quot;git rm --cached &lt;file&gt;...&quot;</span> to unstage)</span><br><span class="line">        new file:   README</span><br><span class="line">    </span><br><span class="line">Untracked files:</span><br><span class="line">  (use <span class="string">&quot;git add &lt;file&gt;...&quot;</span> to include <span class="keyword">in</span> what will be committed)</span><br><span class="line">        VGA.cache/</span><br><span class="line">        VGA.hw/</span><br><span class="line">        VGA.ip_user_files/</span><br><span class="line">        VGA.runs/</span><br><span class="line">        VGA.sim/</span><br><span class="line">        VGA.srcs/</span><br><span class="line">        VGA.xpr</span><br><span class="line">        xilinx.com_user_Divider_1.<span class="number">0</span>/    </span><br></pre></td></tr></table></figure>
+
+<p> <code>Changes to be committed</code>指文件处于暂存区。</p>
+<h4 id="暂存已修改的文件"><a href="#暂存已修改的文件" class="headerlink" title="暂存已修改的文件"></a>暂存已修改的文件</h4><p>当修改一个已跟踪的文件后，用 <code>git status</code> 来查看仓库状态。（为了精简没有列出 <code>Untracked files</code>，下面若不必要一律不列出）</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; <span class="built_in">echo</span> <span class="string">&quot;my vgaproject&quot;</span> &gt; README</span><br><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git status</span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Changes to be committed:</span><br><span class="line">  (use <span class="string">&quot;git rm --cached &lt;file&gt;...&quot;</span> to unstage)</span><br><span class="line">        new file:   README</span><br><span class="line"></span><br><span class="line">Changes not staged <span class="keyword">for</span> commit:</span><br><span class="line">  (use <span class="string">&quot;git add &lt;file&gt;...&quot;</span> to update what will be committed)</span><br><span class="line">  (use <span class="string">&quot;git restore &lt;file&gt;...&quot;</span> to discard changes <span class="keyword">in</span> working directory)</span><br><span class="line">        modified:   README</span><br></pre></td></tr></table></figure>
+
+<p><code>Changes not staged for commit</code> 指已跟踪文件内容发生了变化，但还没有放入暂存区。<strong>注</strong>：这里注意到 <code>README</code> 文件同时出现在了暂存区和非暂存区，本质是因为 Git 只暂存了运行 <code>git add</code> 命令时的版本，<strong>即并不会随着本地工作区的文件变化实时更新</strong>，如果现在提交，则 <code>README</code> 中的内容将是最后一次运行 <code>git add</code> 命令时的那个版本。</p>
+<p>使用 <code>git add &lt;files&gt;</code> 来将文件放入暂存区。 这是个多功能命令：可以用它开始跟踪新文件，或者把已跟踪的文件放到暂存区，还能用于合并时把有冲突的文件标记为已解决状态等。 将这个命令理解为 ”<strong>精确地将内容添加到下一次提交中</strong>” 而不是 “将一个文件添加到项目中” 要更加合适。 </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git add README</span><br><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git status</span><br><span class="line">On branch master</span><br><span class="line"></span><br><span class="line">No commits yet</span><br><span class="line"></span><br><span class="line">Changes to be committed:</span><br><span class="line">  (use <span class="string">&quot;git rm --cached &lt;file&gt;...&quot;</span> to unstage)</span><br><span class="line">        new file:   README</span><br></pre></td></tr></table></figure>
+
+<h4 id="忽略文件"><a href="#忽略文件" class="headerlink" title="忽略文件"></a>忽略文件</h4><p>一般有一些文件不需要纳入 Git 的管理，也不希望他们总是出现在未跟踪列表。故我们可以创建一个名为 <code>.gitignore</code> 的文件，列出要忽略的文件的模式。<code>.gitignore</code> 的格式规范如下：</p>
+<ul>
+<li><p>所有空行或者以 # 开头的行都会被 Git 忽略。（注释行）</p>
+</li>
+<li><p>所有空行或者以 # 开头的行都会被 Git 忽略。</p>
+<blockquote>
+<p>星号（*）匹配零个或多个任意字符；</p>
+<p>[abc] 匹配 任何一个列在方括号中的字符 （这个例子要么匹配一个 a，要么匹配一个 b，要么匹配一个 c）；</p>
+<p> 问号（?）只匹配一个任意字符；</p>
+<p>如果在方括号中使用短划线分隔两个字符， 表示所有在这两个字符范围内的都可以匹配 （比如 [0-9] 表示匹配所有 0 到 9 的数字）；</p>
+<p>使用两个星号（**）表示匹配任意中间目录，比如 a&#x2F;**&#x2F;z 可以 匹配 a&#x2F;z 、 a&#x2F;b&#x2F;z 或 a&#x2F;b&#x2F;c&#x2F;z 等。</p>
+</blockquote>
+<p>一个例子</p>
+</li>
+<li><p>匹配模式可以以（&#x2F;）开头防止递归。</p>
+</li>
+<li><p>匹配模式可以以（&#x2F;）结尾指定目录。</p>
+</li>
+<li><p>要忽略指定模式以外的文件或目录，可以在模式前加上叹号（!）取反。</p>
+</li>
+</ul>
+<p>一个 <code>.gitignore</code> 文件例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 忽略所有的 .a 文件</span><br><span class="line">*.a</span><br><span class="line"># 但跟踪所有的 lib.a，即便你在前面忽略了 .a 文件</span><br><span class="line">!lib.a</span><br><span class="line"># 只忽略当前目录下的 TODO 文件，而不忽略 subdir/TODO</span><br><span class="line">/TODO</span><br><span class="line"># 忽略任何目录下名为 build 的文件夹</span><br><span class="line">build/</span><br><span class="line"># 忽略 doc/notes.txt，但不忽略 doc/server/arch.txt</span><br><span class="line">doc/*.txt</span><br><span class="line"># 忽略 doc/ 目录及其所有子目录下的 .pdf 文件</span><br><span class="line">doc/**/*.pdf</span><br></pre></td></tr></table></figure>
+
+<h5 id="gitignore-失效问题"><a href="#gitignore-失效问题" class="headerlink" title=".gitignore 失效问题"></a>.gitignore 失效问题</h5><p>当已经使用git一段时间然后再添加 <code>.gitignore</code> 文件时，会出现 <code>.gitignore</code> 失效的问题，因为之前已经将所有文件都add到了git repository，git 不会因为 <code>.gitignore</code> 的添加就自动将需要忽略的文件从repository中删除，所以需要使用命令 <code>git rm -rf --cached .</code> 清理repository中的缓存。</p>
+<p>注：这个操作必须要在当前工作状态为干净时进行，即已经 commit 了所有改变。</p>
+<h4 id="查看已暂存和未暂存的修改"><a href="#查看已暂存和未暂存的修改" class="headerlink" title="查看已暂存和未暂存的修改"></a>查看已暂存和未暂存的修改</h4><p>使用 <code>git diff &lt;files&gt;</code> 比较<strong>工作目录中当前文件</strong>和<strong>暂存区域快照</strong>之间的差异，差异会被详细列出，若不加files，则比较所有工作区文件与对应暂存区快照之间的差异。</p>
+<p>使用 <code>git diff --staged</code> 或 <code>git diff --cached</code> 比较已暂存的与最后一次提交的文件差异。</p>
+<h4 id="提交更新"><a href="#提交更新" class="headerlink" title="提交更新"></a>提交更新</h4><p>当暂存区已经准备就绪，则可以使用 <code>git commit</code> 来将暂存区中的内容提交。这时会打开设定的文本编辑器来输入提交说明，默认为 <code>vim</code>。</p>
+<p>调用命令后默认会显示 <code>git status</code> 命令的信息，处于注释行中。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">(在此键入说明信息)</span><br><span class="line"><span class="comment"># Please enter the commit message for your changes. Lines starting</span></span><br><span class="line"><span class="comment"># with &#x27;#&#x27; will be ignored, and an empty message aborts the commit.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># On branch master</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Initial commit</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Changes to be committed:</span></span><br><span class="line"><span class="comment">#       new file:   README</span></span><br><span class="line"><span class="comment">#       new file:   VGA.srcs/constrs_1/new/top_xdc.xdc</span></span><br><span class="line"><span class="comment">#       ....       </span></span><br><span class="line">D:/newproject/VGA/.git/COMMIT_EDITMSG[+] [<span class="type">unix</span>] (<span class="number">11</span>:<span class="number">14</span> <span class="number">17</span>/<span class="number">12</span>/<span class="number">2021</span>)                                      <span class="number">1</span>,<span class="number">49</span><span class="literal">-33</span> Top<span class="string">&quot;D:/newproject/VGA/.git/COMMIT_EDITMSG&quot;</span> [<span class="type">unix</span>] <span class="number">104</span>L, <span class="number">6255</span>B written</span><br></pre></td></tr></table></figure>
+
+<p>输入完说明信息后，按 <code>Esc</code> 回到一般模式，后输入<code>:q</code>即可退出vim编辑器，或者输入<code>:q!(强制退出不保存)</code>、<code>:wq(保存后退出)</code>、<code>:wq!(强制保存后退出)</code>也可以退出编辑器。</p>
+<p>提交成功后会显示：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[<span class="type">master</span> (<span class="type">root</span>-<span class="type">commit</span>) <span class="type">b03e160</span>] 能够显示特定颜色，但还不能显示图片</span><br><span class="line"> <span class="number">87</span> files changed, <span class="number">605421</span> insertions(+)</span><br><span class="line"> create mode <span class="number">100644</span> README</span><br><span class="line"> create mode <span class="number">100644</span> VGA.srcs/constrs_1/new/top_xdc.xdc</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+
+<p>b03e160是<strong>SHA-1校验和</strong>的前一部分，由哈希函数得出；还显示了本次提交有多少文件改变，多少行添加和删改过。</p>
+<h3 id="查看提交历史"><a href="#查看提交历史" class="headerlink" title="查看提交历史"></a>查看提交历史</h3><p>使用命令 <code>git log</code> 来查看提交的历史</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">PS</span> D:\newproject\VGA&gt; git log</span><br><span class="line">commit b03e160fd9128841bbeef19f89327ddd0cc32089 (HEAD -&gt; master)</span><br><span class="line">Author: joker &lt;<span class="number">2923784829</span>@qq.com&gt;</span><br><span class="line">Date:   Fri Dec <span class="number">17</span> <span class="number">11</span>:<span class="number">14</span>:<span class="number">55</span> <span class="number">2021</span> +<span class="number">0800</span></span><br><span class="line"></span><br><span class="line">    能够显示特定颜色，但还不能显示图片</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-p</td>
+<td>按补丁格式显示每个提交引入的差异。</td>
+</tr>
+<tr>
+<td>–stat</td>
+<td>显示每次提交的文件修改统计信息。</td>
+</tr>
+<tr>
+<td>–shortstat</td>
+<td>只显示 –stat 中最后的行数修改添加移除统计。</td>
+</tr>
+<tr>
+<td>–name-only</td>
+<td>仅在提交信息后显示已修改的文件清单。</td>
+</tr>
+<tr>
+<td>–name-status</td>
+<td>显示新增、修改、删除的文件清单。</td>
+</tr>
+<tr>
+<td>–abbrev-commit</td>
+<td>仅显示 SHA-1 校验和所有 40 个字符中的前几个字符。</td>
+</tr>
+<tr>
+<td>–relative-date</td>
+<td>使用较短的相对时间而不是完整格式显示日期（比如“2 weeks ago”）。</td>
+</tr>
+<tr>
+<td>–graph</td>
+<td>在日志旁以 ASCII 图形显示分支与合并历史。</td>
+</tr>
+<tr>
+<td>–pretty</td>
+<td>使用其他格式显示历史提交信息。可用的选项包括 oneline、short、full、fuller 和 format（用来定义自己的格式）。</td>
+</tr>
+<tr>
+<td>–oneline</td>
+<td>–pretty&#x3D;oneline –abbrev-commit 合用的简写。</td>
+</tr>
+</tbody></table>
+<p><strong>使用 <code>git log -p &lt;file&gt;</code> 来查看已提交文件的全部内容。</strong></p>
+<h3 id="远程仓库的使用"><a href="#远程仓库的使用" class="headerlink" title="远程仓库的使用"></a>远程仓库的使用</h3><h4 id="查看远程仓库"><a href="#查看远程仓库" class="headerlink" title="查看远程仓库"></a>查看远程仓库</h4><p>使用命令<code>git remote</code>来查看远程仓库，可以使用<code>-v</code>选项来查看其对应的url</p>
+<h4 id="添加远程仓库"><a href="#添加远程仓库" class="headerlink" title="添加远程仓库"></a>添加远程仓库</h4><p>使用命令<code>git remote add &lt;shortname&gt; &lt;url&gt;</code>来添加一个远程仓库</p>
+<h3 id="从远程仓库中抓取-fetch-和拉取"><a href="#从远程仓库中抓取-fetch-和拉取" class="headerlink" title="从远程仓库中抓取(fetch)和拉取"></a>从远程仓库中抓取(fetch)和拉取</h3><p>使用命令<code>git fetch &lt;remote&gt;</code>访问远程仓库，并从中抓取你还没有的数据。（使用<code>git clone</code>命令添加的远程仓库会默认以origin为简写）。注意，<code>git fetch</code>命令只会将数据下载到你的本地仓库——它<strong>并不会自动合并或修改你当前的工作</strong>。当准备好时你必须手动将其合并入你的工作。</p>
+<h3 id="打标签"><a href="#打标签" class="headerlink" title="打标签"></a>打标签</h3><p>p62</p>
+<h3 id="Git-别名"><a href="#Git-别名" class="headerlink" title="Git 别名"></a>Git 别名</h3><p>使用命令<code>git config --global alias.别名 原名</code>创建别名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git config --global alias.ci commit</span><br><span class="line">git commit = git ci</span><br><span class="line"></span><br><span class="line">git config --global alias.unstage &#x27;reset HEAD --&#x27;</span><br><span class="line">git reset HEAD fileA = git unstage fileA</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="Git-分支"><a href="#Git-分支" class="headerlink" title="Git 分支"></a>Git 分支</h2><p> 使用分支意味着你可以把你的工作从开发主线上分离开来， 以免影响开发主线。</p>
+<h3 id="分支简介"><a href="#分支简介" class="headerlink" title="分支简介"></a>分支简介</h3><p>当使用 git commit 进行提交操作时，Git 会先计算每一个子目录（本例中只有项目根目录）的校验和， 然后在 Git 仓库中这些校验和保存为<strong>树对象</strong>。随后，Git 便会创建一个<strong>提交对象</strong>， 它除了包含上面提到的那些信息 外，还包含指向这个树对象（项目根目录）的指针。 如此一来，Git 就可以在需要的时候重现此次保存的快照。</p>
+<p>当执行以下语句</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add README test.rb LICENSE</span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&#x27;The initial commit of my project&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>Git 仓库中有五个对象：三个 blob 对象（保存着文件快照）、一个 树 对象 （记录着目录结构和 blob 对象索引）以及一个 提交 对象（包含着指向前述树对象的指针和所有提交信息）。</p>
+<p><img src="/2024/08/11/hello-world/image-20220124164121494.png" alt="image-20220124164121494"></p>
+<p>做些修改后再次提交，那么这次产生的提交对象会包含一个指向上次提交对象（父对象）的指针。</p>
+<p><img src="/2024/08/11/hello-world/image-20220124164148200.png" alt="image-20220124164148200"></p>
+<p><strong>Git 的分支，其实本质上仅仅是指向提交对象的可变指针</strong>。 Git 的默认分支名字是 master。 在多次提交操作之后，你其实已经有一个指向最后那个提交对象的 master 分支。 master 分支会在<strong>每次提交时自动向前移动</strong>。</p>
+<h4 id="分支创建"><a href="#分支创建" class="headerlink" title="分支创建"></a>分支创建</h4><p>Git 是怎么创建新分支的呢？ 很简单，它只是为你创建了一个可以移动的新的指针。 比如，创建一个 testing 分支， 你需要使用 git branch 命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch testing</span><br></pre></td></tr></table></figure>
+
+<p>这会在<strong>当前所在的提交对象</strong>上创建一个指针。</p>
+<p><img src="/2024/08/11/hello-world/image-20220124164657608.png" alt="image-20220124164657608"></p>
+<p><strong>Git通过一个名为HEAD的特殊指针确定当前在哪一个分支上。</strong></p>
+<p><img src="/2024/08/11/hello-world/image-20220124164816418.png" alt="image-20220124164816418"></p>
+<p>如图，<code>git branch ..</code>仅仅是创建了一个分支，但当前所在分支仍然是master</p>
+<h4 id="分支切换"><a href="#分支切换" class="headerlink" title="分支切换"></a>分支切换</h4><p>使用命令 <code>git checkout</code> 来进行分支切换，如切换到testing分支中去</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout testing</span><br></pre></td></tr></table></figure>
+
+<p>这样便使 HEAD 指向 testing，<code>git checkout</code> 后不仅可以接分支名，还可以接提交对象的<strong>校验和</strong>，使得Head指向某提交对象。</p>
+<p>注：使用<code>git checkout 34ac2</code> 只会使HEAD指针指向 <code>34ac2</code> 提交对象，不会在该提交对象上创建指针，因此，如果在 <code>34ac2</code> 提交对象上做修改后继续提交，只有HEAD指针会跟随着往前走，此时若切换回master或testing分支，那么新的提交对象将会因为没有指针指向他而无法被 <code>git log</code> 列出（但是仍然可以通过校验和来找到他）</p>
+<p><img src="/2024/08/11/hello-world/image-20220124170951145.png" alt="image-20220124170951145"></p>
+<p> 那么<strong>分支的具体作用</strong>是什么呢？再提交一次便可以知道</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;new branch&quot;</span> &gt; README.md</span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&#x27;made a change&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/08/11/hello-world/image-20220124171520923.png" alt="image-20220124171520923"></p>
+<p>由图则可以明确分支的作用</p>
+<ol>
+<li><strong>只有 HEAD 指针指向的分支才会随着提交向前移动</strong></li>
+<li>根据<strong>提交对象保存父对象指针</strong>的性质，则每个分支的提交记录是不同的</li>
+<li>当我们切换回原分支时，文件内容会回退到该分支的版本（<strong>即切换分支会改变文件内容！！</strong>）。注：如果 Git 不能干净利落地完成这个任 务，它将禁止切换分支</li>
+</ol>
+<p>我们再切换回master分支（<strong>在切换分支之前最好保证工作区的干净，即所有修改已经被提交</strong>），然后再稍作修改后提交</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;divide branch&quot;</span> &gt; README.md</span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&#x27;made other changes&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/08/11/hello-world/image-20220124173116314.png" alt="image-20220124173116314"></p>
+<p>项目产生了分叉，因为刚才你创建了一个新分支，并切换过去进行了一些工作，随后又切换回 master 分支进行了另外一些工作。 上述两次改动针对的是不同分支：你可以在不同分支间不断地来回切换和工作，并在时机成熟时将它们合并起来。 而所有这些工作，你需要的命令只有 branch、checkout 和 commit。</p>
+<p>可以使用 <code>git log --oneline --decorate --graph --all</code> 来查看你的提交历史、各个分支的指向以及项目的分支分叉情况。上图所示的命令结果为</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">* c2b9e (HEAD, master) made other changes</span><br><span class="line">| * <span class="number">87</span>ab2 (testing) made a change</span><br><span class="line">|/</span><br><span class="line">* f30ab add feature <span class="comment">#32 - ability to add new formats to the</span></span><br><span class="line">* <span class="number">34</span>ac2 fixed bug <span class="comment">#1328 - stack overflow under certain conditions</span></span><br><span class="line">* <span class="number">98</span>ca9 initial commit of my project</span><br></pre></td></tr></table></figure>
+
+<h5 id="针对特定文件切换分支"><a href="#针对特定文件切换分支" class="headerlink" title="针对特定文件切换分支"></a>针对特定文件切换分支</h5><p>git 还支持针对某文件进行分支切换，对应的命令是 <code>git checkout &lt;branchname&gt; -- absolute path of specific file</code>。</p>
+<p>改命令会将特定的文件切换到其指定分支时的历史状态，其他文件保持不变。</p>
+<h3 id="分支的新建与合并"><a href="#分支的新建与合并" class="headerlink" title="分支的新建与合并"></a>分支的新建与合并</h3><p>命令 <code>git checkout -b &lt;newbranchname&gt;</code> 可以创建一个分支并让 HEAD 指向它，相当于命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git branch &lt;newbranchname&gt;</span><br><span class="line">git checkout &lt;newbranchname&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h4><p>使用命令<code>git merge &lt;branchname&gt;</code>来合并 HEAD 指向的分支和 branchname 分支。</p>
+<h5 id="未经过分叉的合并"><a href="#未经过分叉的合并" class="headerlink" title="未经过分叉的合并"></a>未经过分叉的合并</h5><p>如下，现在 HEAD 指向 master 分支</p>
+<p><img src="/2024/08/11/hello-world/image-20220124175946382.png" alt="image-20220124175946382"></p>
+<p>执行命令</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$</span> git merge hotfix</span><br><span class="line">Updating f42c576..<span class="number">3</span>a0874c</span><br><span class="line">Fast<span class="literal">-forward</span></span><br><span class="line"> index.html | <span class="number">2</span> ++</span><br><span class="line"> <span class="number">1</span> file changed, <span class="number">2</span> insertions(+) <span class="comment">#具体信息无所谓</span></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+<p>则得到下图所示结果</p>
+<p><img src="/2024/08/11/hello-world/image-20220124180059200.png" alt="image-20220124180059200"></p>
+<p>注意，此时 master 和 hotfix 指向同一个提交对象，<strong>merge 并不会删除某一个分支</strong>，需要我们手动删除</p>
+<p>使用命令 <code>git branch -d &lt;branchname&gt;</code> 来删除一个分支</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$</span> git branch <span class="literal">-d</span> hotfix</span><br><span class="line">Deleted branch hotfix (<span class="number">3</span>a0874c).</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="经过分叉的合并"><a href="#经过分叉的合并" class="headerlink" title="经过分叉的合并"></a>经过分叉的合并</h5><p>当我们切换回 iss53 继续工作并结束，我们需要合并 master 分支和 iss53 分支</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout iss53</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/2024/08/11/hello-world/image-20220124180818404.png" alt="image-20220124180818404"></p>
+<p>此时执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge master</span><br></pre></td></tr></table></figure>
+
+<p>git 会根据三个快照：<strong>两个分支末端所指向的快照（C4 和 C5）</strong>和<strong>两个分支的公共祖先（C2）来完成这次合并</strong>。</p>
+<p><img src="/2024/08/11/hello-world/image-20220124181232584.png" alt="image-20220124181232584"></p>
+<p>结果如下</p>
+<p><img src="/2024/08/11/hello-world/image-20220124181304501.png" alt="image-20220124181304501"></p>
+<p>和之前分支指针推进不同的是，Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提 交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。</p>
+<p>此时已经不再需要分支iss53，使用上述命令删除其即可。</p>
+<h5 id="遇到冲突时的合并"><a href="#遇到冲突时的合并" class="headerlink" title="遇到冲突时的合并"></a>遇到冲突时的合并</h5><p>p79</p>
+<h3 id="远程分支"><a href="#远程分支" class="headerlink" title="远程分支"></a>远程分支</h3><p>p91 细节</p>
+<p>远程引用是对远程仓库的引用（指针），包括分支、标签等等。可以通过 <code>git ls-remote &lt;remote&gt;</code>     来显式地获得远程引用的完整列表，或者通过 <code>git remote show &lt;remote&gt;</code>  获得远程分支的更多信息。<strong>远程分支和本地分支本质相同</strong>，不过你不能通过在该分支上工作然后提交来推进该分支（这么做显然违反了初衷，远程分支是为了和远程仓库保持同步的，在远程仓库上工作是不合理的）。</p>
+<h4 id="添加远程分支"><a href="#添加远程分支" class="headerlink" title="添加远程分支"></a>添加远程分支</h4><p>通过 <code>git remote add &lt;remote&gt; &lt;url&gt;</code> 来添加远程项目分支（该项目的所有分支都会加入进去）。第一次添加远程分支后要使用 <code>git fetch &lt;remote&gt;</code> 来同步远程分支，不然是<strong>无法观察到远程分支</strong>的。</p>
+<h4 id="同步远程分支"><a href="#同步远程分支" class="headerlink" title="同步远程分支"></a>同步远程分支</h4><p>远程分支以 &lt;remote&gt;&#x2F;&lt;branch&gt; 命名。它不会自动随着远程仓库改变而推进，需要手动使用命令 <code>git fetch &lt;remote&gt;</code> 来同步远程分支。</p>
+<p>注意，当 <code>git fetch</code> 抓取到新的远程分支时，他不会自动生成一份可编辑的副本，即他只会添加一个 origin&#x2F;newbranch，不会生成newbranch，可以通过命令 <code>git checkout -b &lt;newbranch&gt; &lt;remote&gt;/&lt;newbranch&gt;</code> 来创建一个用于工作的本地分支，并且起点位于&lt;remote&gt;&#x2F;&lt;newbranch&gt;。</p>
+<h4 id="推送"><a href="#推送" class="headerlink" title="推送"></a>推送</h4><p>当你想要公开分享一个分支时，需要将其推送到<strong>有写入权限</strong>的远程仓库上。 本地的分支并<strong>不会自动</strong>与远程仓库同步——你必须显式地推送想要分享的分支。 使用命令 <code>git push &lt;remote&gt; &lt;branchname&gt;</code> 来将本地的 branchname 分支推送到远程仓库的 branchname 分支。故更完备的命令应该是 <code>git push &lt;remote&gt; &lt;localbranch:remotebranch&gt;</code> ，将 localbranch 推送到 remotebranch。</p>
+<p>加上<code>-f</code>参数可以将本地分支强制推送到远程分支上，覆盖远程分支的代码。</p>
+<h4 id="跟踪分支"><a href="#跟踪分支" class="headerlink" title="跟踪分支"></a>跟踪分支</h4><p>跟踪分支是与远程分支有直接联系的<strong>本地分支</strong>（被跟踪的分支称为<strong>上游分支</strong>）。如果在一个跟踪分支上输入 <code>git pull</code> ，Git 能自动地识别去哪个服务器上抓取、合并到哪个分支。</p>
+<h5 id="创建跟踪分支"><a href="#创建跟踪分支" class="headerlink" title="创建跟踪分支"></a>创建跟踪分支</h5><p>使用命令 <code>git checkout -b &lt;branch&gt; &lt;remote&gt;/&lt;branch&gt;</code> 来创建一个跟踪远程分支 <code>&lt;remote&gt;/&lt;branch&gt;</code> 的本地分支 <code>&lt;branch&gt;</code>，由于该命令很常用，故有简写命令 <code>git checkout --track &lt;remote&gt;/&lt;branch&gt;</code> 来达成相同的效果。</p>
+<p>还有一种方式， 如果你尝试检出的<strong>分支 (a) 不存在</strong>且 <strong>(b) 刚好只有一个名字与之匹配的远程分支</strong>，那么 Git 就会为你创建一个跟踪分支，即直接使用 <code>git checkout &lt;branch&gt;</code>。</p>
+<p>设置<strong>已有的本地分支跟踪一个远程分支</strong>，可以使用命令 <code>git branch -u &lt;remote&gt;/&lt;branch&gt; </code> 使当前 HEAD所指向的分支跟踪该远程分支。</p>
+<p>若想要查看设置的所有跟踪分支，可以使用命令 <code>git branch -vv</code>。</p>
+<h4 id="停止跟踪远程分支"><a href="#停止跟踪远程分支" class="headerlink" title="停止跟踪远程分支"></a>停止跟踪远程分支</h4><p>使用命令 <code>git branch -d -r &lt;remote&gt;/&lt;branch&gt;</code>来停止跟踪一个远程分支，这个操作只会删除本地的远程分支，对远程仓库中的分支没有影响。</p>
+<p><code>git remote remove &lt;remote&gt;</code> 貌似更好用。</p>
+<h4 id="拉取"><a href="#拉取" class="headerlink" title="拉取"></a>拉取</h4><p>当 <code>git fetch</code> 命令从服务器上抓取本地没有的数据时，它并不会修改工作目录中的内容。 它只会获取数据然后让你自己合并。然而，有一个命令叫作 <code>git pull</code> 在大多数情况下它的含义是一个 <code>git fetch</code> 紧接着一个 <code>git merge</code> 命令。</p>
+<p>p98</p>
+<h4 id="删除远程分支"><a href="#删除远程分支" class="headerlink" title="删除远程分支"></a>删除远程分支</h4><p>使用命令 <code>git push &lt;remote&gt; --delete &lt;branch&gt;</code> 来删除远程仓库中的分支。（需要有删除权限）</p>
+<h2 id="服务器上的Git"><a href="#服务器上的Git" class="headerlink" title="服务器上的Git"></a>服务器上的Git</h2><h2 id="ssh-配置"><a href="#ssh-配置" class="headerlink" title="ssh 配置"></a>ssh 配置</h2><h3 id="配置ssh密钥登陆服务器"><a href="#配置ssh密钥登陆服务器" class="headerlink" title="配置ssh密钥登陆服务器"></a>配置ssh密钥登陆服务器</h3><p><img src="/2024/08/11/hello-world/image-20230422151911894.png" alt="image-20230422151911894"></p>
+<ol>
+<li><p><strong>客户端</strong>生成公钥私钥对</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">local</span>$ ssh-keygen</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/user/.ssh/id_rsa):</span><br><span class="line">Created directory <span class="string">&#x27;/home/user/.ssh&#x27;</span>.</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /home/user/.ssh/id_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /home/user/.ssh/id_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:47VkvSjlFhKRgz/6RYdXM2EULtk9TQ65PDWJjYC5Jys user@<span class="built_in">local</span></span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 2048]----+</span></span><br><span class="line"><span class="string">|       ...o...X+o|</span></span><br><span class="line"><span class="string">|      . o+   B=Oo|</span></span><br><span class="line"><span class="string">|       .....ooo*=|</span></span><br><span class="line"><span class="string">|        o+ooo.+ .|</span></span><br><span class="line"><span class="string">|       .SoXo.  . |</span></span><br><span class="line"><span class="string">|      .E X.+ .   |</span></span><br><span class="line"><span class="string">|       .+.= .    |</span></span><br><span class="line"><span class="string">|        .o       |</span></span><br><span class="line"><span class="string">|                 |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure>
+
+<p>生成的<strong>私钥</strong>存放在<code>/home/user/.ssh/id_rsa</code>内，<strong>公钥</strong>存放在<code>/home/user/.ssh/id_rsa.pub</code>内。</p>
+</li>
+<li><p>将客户端的<strong>公钥</strong>发送给服务器</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">local</span>$ ssh-copy-id user@remote -p port</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: <span class="string">&quot;/home/user/.ssh/id_rsa.pub&quot;</span></span><br><span class="line">/usr/bin/ssh-copy-id: INFO: attempting to <span class="built_in">log</span> <span class="keyword">in</span> with the new key(s), to filter out any that are already installed</span><br><span class="line">/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- <span class="keyword">if</span> you are prompted now it is to install the new keys</span><br><span class="line">user@remote<span class="string">&#x27;s password:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Number of key(s) added: 1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Now try logging into the machine, with:   &quot;ssh &#x27;</span>user@remote<span class="string">&#x27; -p port&quot;</span></span><br><span class="line"><span class="string">and check to make sure that only the key(s) you wanted were added.</span></span><br></pre></td></tr></table></figure>
+
+<p>这个命令会将<code>.ssh</code>文件夹下的<strong>所有公钥</strong>都复制到服务器的<code>.ssh/authorized_keys</code>中，<strong>不同公钥串之间以换行隔开</strong>。故也可以自己复制对应的公钥串，然后再粘贴到服务器的<code>.ssh/authorized_keys</code>内。</p>
+</li>
+<li><p>发起登录请求</p>
+<p>配置完毕后，即可使用<code>ssh user@remote</code>直接登录（默认端口为22）</p>
+</li>
+</ol>
+<p>同理对于<code>github.com</code>服务器，本地生成密钥对后，将公钥配置到<code>github.com</code>服务器内，即可通过<code>git clone</code>访问服务器。</p>
 
   </article>
   <!-- tag -->

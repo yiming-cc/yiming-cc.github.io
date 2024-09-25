@@ -15,7 +15,7 @@
 
 
 
-<title>Hello World | Blog</title>
+<title>常见系统的坐标系习俗总结 | Blog</title>
 
 
 
@@ -154,7 +154,7 @@
         </h2>
       </a>
       <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
-        Hello World
+        常见系统的坐标系习俗总结
       </div>
       <div class="flex-1"></div>
       <div class="flex items-center gap-3">
@@ -218,13 +218,13 @@
   <header class="overflow-hidden pt-6 pb-6 md:pt-12">
     <div class="pt-4 md:pt-6">
       <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
-        Hello World
+        常见系统的坐标系习俗总结
       </h1>
       <div>
         <section class="flex items-center gap-3 text-sm">
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
-            <time>2024-08-11</time>
+            <time>2024-09-24</time>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
@@ -234,7 +234,7 @@
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
-            <span>75 words</span>
+            <span>153 words</span>
           </span>
           
         </section>
@@ -243,19 +243,37 @@
   </header>
   <!-- content -->
   <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
-    <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+    <h1 id="Blender"><a href="#Blender" class="headerlink" title="Blender"></a>Blender</h1><p>World</p>
+<ul>
+<li>X Left</li>
+<li>Y Back</li>
+<li>Z Up</li>
+</ul>
+<p>Camera</p>
+<ul>
+<li>Z Negative</li>
+<li>Y Up</li>
+</ul>
+<p>Blender会对其导入的mesh&#x2F;ply等做一个坐标转化，因此在Blender窗口中看到的物体点的坐标并不是文件中存储的点的坐标。图示如下：</p>
+<p><img src="/2024/09/18/hello-world/ad002eded8c816ca47ce3cf462c682f.png"></p>
+<p>具体的转化为：<br>$$<br>P_{blender} &#x3D; \left[\begin{array}{ccc} 1 &amp; 0 &amp; 0 \ 0 &amp; 0 &amp; -1 \ 0 &amp; 1 &amp; 0 \end{array}\right] P_{file}<br>$$</p>
+<h1 id="Pytorch3d"><a href="#Pytorch3d" class="headerlink" title="Pytorch3d"></a>Pytorch3d</h1><p>World</p>
+<ul>
+<li>X left</li>
+<li>Y Up</li>
+<li>Z Forward</li>
+</ul>
+<p>Camera</p>
+<ul>
+<li>Z Positive</li>
+<li>Y Up</li>
+</ul>
+<p>注意，Pytorch3d中的外参转化计算遵循$P_c &#x3D; P_w R + T$，因此构建pytorch3d camera时，传递的外参应为$R&#x3D;R_{w2c}^T, T&#x3D;T_{w2c}$</p>
+<h1 id="Colmap"><a href="#Colmap" class="headerlink" title="Colmap"></a>Colmap</h1><p>Camera</p>
+<ul>
+<li>Z Positive</li>
+<li>X Up</li>
+</ul>
 
   </article>
   <!-- tag -->
@@ -266,13 +284,13 @@
   <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
     <div>
       
-        <a href="/2024/08/11/git-tutorial/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
-          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
-          git tutorial
-        </a>
-      
     </div>
     <div>
+      
+        <a href="/2024/09/18/hello-world/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          Hello World
+          <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
+        </a>
       
     </div>
   </div>

@@ -15,7 +15,7 @@
 
 
 
-<title>常见系统的坐标系习俗总结 | Blog</title>
+<title>gaussian cuda渲染代码详解 | Blog</title>
 
 
 
@@ -154,7 +154,7 @@
         </h2>
       </a>
       <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
-        常见系统的坐标系习俗总结
+        gaussian cuda渲染代码详解
       </div>
       <div class="flex-1"></div>
       <div class="flex items-center gap-3">
@@ -209,32 +209,28 @@
 
 <!-- toc -->
 
-  <!-- tocbot -->
-<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
-
-
 <section class="px-6 max-w-prose mx-auto md:px-0">
   <!-- header -->
   <header class="overflow-hidden pt-6 pb-6 md:pt-12">
     <div class="pt-4 md:pt-6">
       <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
-        常见系统的坐标系习俗总结
+        gaussian cuda渲染代码详解
       </h1>
       <div>
         <section class="flex items-center gap-3 text-sm">
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
-            <time>2024-09-25</time>
+            <time>2024-09-24</time>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
-            <span>3 min</span>
+            <span>1 min</span>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
-            <span>918 words</span>
+            <span>0 words</span>
           </span>
           
         </section>
@@ -243,86 +239,7 @@
   </header>
   <!-- content -->
   <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
-    <h1 id="Blender"><a href="#Blender" class="headerlink" title="Blender"></a>Blender</h1><p>World</p>
-<ul>
-<li>X Left</li>
-<li>Y Back</li>
-<li>Z Up</li>
-</ul>
-<p>Camera</p>
-<ul>
-<li>Z Negative</li>
-<li>Y Up</li>
-</ul>
-<p>Blender会对其导入的mesh&#x2F;ply等做一个坐标转化，因此在Blender窗口中看到的物体点的坐标并不是文件中存储的点的坐标。图示如下：</p>
-<p><img src="/2024/09/18/hello-world/ad002eded8c816ca47ce3cf462c682f.png"></p>
-<p>具体的转化为：<br>$$<br>P_{blender} &#x3D; \left[\begin{array}{ccc} 1 &amp; 0 &amp; 0 \ 0 &amp; 0 &amp; -1 \ 0 &amp; 1 &amp; 0 \end{array}\right] P_{file}<br>$$</p>
-<h1 id="Pytorch3d"><a href="#Pytorch3d" class="headerlink" title="Pytorch3d"></a>Pytorch3d</h1><p>World</p>
-<ul>
-<li>X left</li>
-<li>Y Up</li>
-<li>Z Forward</li>
-</ul>
-<p>Camera</p>
-<ul>
-<li>Z Positive</li>
-<li>Y Up</li>
-</ul>
-<p>注意，Pytorch3d中的外参转化计算遵循$P_c &#x3D; P_w R + T$，因此构建pytorch3d camera时，传递的外参应为$R&#x3D;R_{w2c}^T, T&#x3D;T_{w2c}$</p>
-<h1 id="Colmap"><a href="#Colmap" class="headerlink" title="Colmap"></a>Colmap</h1><p>World</p>
-<ul>
-<li>X Right</li>
-<li>Y Down</li>
-<li>Z Forward</li>
-</ul>
-<p>Camera</p>
-<ul>
-<li>Z Positive</li>
-<li>X Up</li>
-</ul>
-<h1 id="OpenCV"><a href="#OpenCV" class="headerlink" title="OpenCV"></a>OpenCV</h1><p>World</p>
-<ul>
-<li>X Right</li>
-<li>Y Down</li>
-<li>Z Forward</li>
-</ul>
-<p>Camear</p>
-<ul>
-<li>Z Positive</li>
-<li>Y Down</li>
-</ul>
-<h1 id="Common"><a href="#Common" class="headerlink" title="Common"></a>Common</h1><h2 id="像素坐标与图片索引"><a href="#像素坐标与图片索引" class="headerlink" title="像素坐标与图片索引"></a>像素坐标与图片索引</h2><p>我们常说的像素坐标(u,v)，也有一个screen space坐标系，满足(0,0)为图像左上角，u向左，v向下。</p>
-<p>这就导致了一个问题，即我们不能直接用(u,v)去索引图像，即img[u,v]对应的像素值并不是像素坐标(u,v)对应的像素。因为图像的存储是行优先的，因此索引是先行后列，所以像素坐标(u,v)对应的索引坐标应该为(v,u)。</p>
-<h2 id="不同渲染系统之间的参数转换"><a href="#不同渲染系统之间的参数转换" class="headerlink" title="不同渲染系统之间的参数转换"></a>不同渲染系统之间的参数转换</h2><p>在实践过程中，经常需要进行不同渲染系统之间的参数转换。比如使用BLender制作了一个数据集，其中的一条数据的形式一般为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[image, R, T, (FoVx, FoVy)/K]</span><br></pre></td></tr></table></figure>
-<p>然后我们需要在一个Colmap的渲染系统中使用这个数据集。那该如何转换参数使得渲染结果仍然正确呢。在下面我将系统的讲述需要的转换以及原理，首先列出以下前提：</p>
-<ul>
-<li>使用下标1表示数据集制作系统，下标2表示渲染系统。</li>
-<li>采用OpenGL的转换传统，从世界坐标P到像素坐标p的转换如下：<br>$$<br>p &#x3D; TP\ NDC\ K_{GL}\left[\begin{array}{rrrr} &amp; R &amp; &amp;T\ 0&amp;0&amp;0&amp;1 \end{array}\right]P<br>$$</li>
-</ul>
-<h3 id="外参转换"><a href="#外参转换" class="headerlink" title="外参转换"></a>外参转换</h3><p>在外参转化过程中，我们一般不需要考虑世界坐标系的转换（当然也可以进行转换，但是不影响最后结果），只需要考虑相机坐标系即可。</p>
-<p>这里的原因如下：从相机坐标系转化到screen space的内参计算，与相机坐标系本身有关；还有许多渲染算法的实现会用到点的depth，即点在相机坐标系中的z，相机坐标系的差异可能会影响z的正负。</p>
-<p>而为什么不需要转化世界坐标，推导如下：</p>
-<ul>
-<li>不对外参和P转化世界坐标<ol>
-<li>首先转换$T_{w_12c_1}$到$T_{w_12c_2}$；</li>
-<li>不对$P_{w_1}$和$T_{w_12c_2}$作进一步转换；</li>
-<li>渲染时计算$P_{c_2} &#x3D; T_{w_12c_2}P_{w_1}$；</li>
-<li>后根据camera_2的内参计算方式，将$P_{c_2}$映射到像素平面上。</li>
-</ol>
-</li>
-<li>对外参和P转化世界坐标<ol>
-<li>首先转换$T_{w_12c_1}$到$T_{w_12c_2}$；</li>
-<li>对$P_{w_1}$和$T_{w_12c_2}$作进一步转换为$P_{w_2}$和$T_{w_22c_2}$；</li>
-<li>渲染时计算$P_{c_2}&#x3D;T_{w_22c_2}P_{w_2}$；</li>
-<li>后根据camera_2的内参计算方式，将$P_{c_2}$映射到像素平面上。</li>
-</ol>
-</li>
-</ul>
-<p>会发现是否转化不对该点渲染到相机坐标系和像素平面上的点坐标产生影响。</p>
-<h3 id="内参转换"><a href="#内参转换" class="headerlink" title="内参转换"></a>内参转换</h3><p>这里不同的相机系统都有自己的一套内参计算方式，根据Fov进行相应的计算即可。</p>
-<p>如果没有提供Fov，那么首先通过内参计算Fov，然后再用新的计算方式算新的内参。</p>
-
+    
   </article>
   <!-- tag -->
   <div class="mt-12 pt-6 border-t border-gray-200">
@@ -332,16 +249,11 @@
   <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
     <div>
       
-        <a href="/2024/09/24/gaussian-cuda%E6%B8%B2%E6%9F%93%E4%BB%A3%E7%A0%81%E8%AF%A6%E8%A7%A3/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
-          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
-          gaussian cuda渲染代码详解
-        </a>
-      
     </div>
     <div>
       
-        <a href="/2024/09/18/hello-world/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
-          Hello World
+        <a href="/2024/09/24/%E5%B8%B8%E8%A7%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9D%90%E6%A0%87%E7%B3%BB%E4%B9%A0%E4%BF%97%E6%80%BB%E7%BB%93/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          常见系统的坐标系习俗总结
           <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
         </a>
       

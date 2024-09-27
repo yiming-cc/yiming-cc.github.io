@@ -224,7 +224,7 @@
         <section class="flex items-center gap-3 text-sm">
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
-            <time>2024-09-18</time>
+            <time>2024-09-26</time>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
@@ -263,7 +263,7 @@
 <h2 id="3DGS-渲染技术详解"><a href="#3DGS-渲染技术详解" class="headerlink" title="3DGS 渲染技术详解"></a>3DGS 渲染技术详解</h2><p>3DGS的渲染遵循标准的以物体为导向的渲染流程，如下图：</p>
 <p><img src="/2024/09/18/hello-world/%E6%9C%AF%E8%AF%A6%E8%A7%A3/image-20240828111714430.png"></p>
 <p>这个流程中的核心步骤为光栅化（Rasterization），故这里，笔者将重点讲述光栅化的细节，而其他的步骤则称为光栅化的前后处理步骤。</p>
-<h3 id="光栅化（Rasterization）"><a href="#光栅化（Rasterization）" class="headerlink" title="光栅化（Rasterization）"></a>光栅化（Rasterization）</h3><p>对于每个基元（primitive，这里指已经投影到像素屏幕的基元），光栅化主要完成两个工作：<strong>枚举被基元覆盖的所有像素并进行属性插值</strong>。光栅化对每个被基元覆盖的像素输出一个或多个<em>段片（fragment）</em>，这些断片存储着针对特定像素的属性值，以及覆盖该像素的基元id（不同像素可能被同一个基元覆盖，因此<strong>一个基元可以构成不同像素的多个段片</strong>）等。具体来说，光栅化的输出为维度为$(H, W, N, M)$向量，即共有$H\times W\times N$个段片，其中$(H,W)$是图片的长和宽；$N$为覆盖该像素的基元数，多余的用0填充；$M$为属性维度。</p>
+<h3 id="光栅化（Rasterization）"><a href="#光栅化（Rasterization）" class="headerlink" title="光栅化（Rasterization）"></a>光栅化（Rasterization）</h3><p>对于每个基元（primitive，这里指已经投影到像素屏幕的基元），光栅化主要完成两个工作：<strong>枚举被基元覆盖的所有像素并进行属性插值</strong>。光栅化对每个被基元覆盖的像素输出一个或多个<em>段片（fragment）</em>，这些段片存储着针对特定像素的属性值，以及覆盖该像素的基元id（不同像素可能被同一个基元覆盖，因此<strong>一个基元可以构成不同像素的多个段片</strong>）等。具体来说，光栅化的输出为维度为$(H, W, N, M)$向量，即共有$H\times W\times N$个段片，其中$(H,W)$是图片的长和宽；$N$为覆盖该像素的基元数，多余的用0填充；$M$为属性维度。</p>
 <p>以三角形的光栅化举例，假设我们有一个2D三角形，三个点的像素坐标为$\mathbf{p}_0&#x3D;(x_0,y_0), \mathbf{p}_1&#x3D;(x_1,y_1),\mathbf{p}_2&#x3D;(x_2,y_2)$，它们的颜色属性分别为$c_0, c_1,c_2$。那么可以简单写出该三角形的光栅化代码如下：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xmin = floor(xi)</span><br><span class="line">xmax = ceiling(xi)</span><br><span class="line">ymin = floor(yi)</span><br><span class="line">ymax = ceiling(yi)</span><br><span class="line">for y = ymin to ymax do</span><br><span class="line">	for x = xmin to xmax do</span><br><span class="line">    	alpha = f12(x,y)/f12(x0,y0)</span><br><span class="line">    	beta = f20(x,y)/f20(x1,y1)</span><br><span class="line">    	gama = f01(x,y)/f01(x2,y2)</span><br><span class="line">    	if (alpha &gt; 0 and beta &gt; 0 and gama &gt; 0) then</span><br><span class="line">    		c = alpha*c0 + beta*c1 + gama*c2</span><br></pre></td></tr></table></figure>
 

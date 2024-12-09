@@ -209,6 +209,10 @@
 
 <!-- toc -->
 
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
 <section class="px-6 max-w-prose mx-auto md:px-0">
   <!-- header -->
   <header class="overflow-hidden pt-6 pb-6 md:pt-12">
@@ -220,7 +224,7 @@
         <section class="flex items-center gap-3 text-sm">
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
-            <time>2024-11-22</time>
+            <time>2024-12-02</time>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
@@ -230,7 +234,7 @@
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
-            <span>0 words</span>
+            <span>515 words</span>
           </span>
           
         </section>
@@ -239,7 +243,17 @@
   </header>
   <!-- content -->
   <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
-    
+    <h2 id="BRDF函数详解"><a href="#BRDF函数详解" class="headerlink" title="BRDF函数详解"></a>BRDF函数详解</h2><p>关于BRDF函数，具体的介绍可以阅读这篇博客：<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/21376124">https://zhuanlan.zhihu.com/p/21376124</a></p>
+<p>在这里笔者给出一个总结，BRDF定义为出射光方向$v$的辐射率与入射光方向$l$辐照度的比值，数学表示为：<br>$$<br>f(l,v) &#x3D; \frac{dL_0(v)}{dE(l)}<br>$$<br>物体的材质决定了BRDF函数的参数，包括漫反射系数$k_d$，镜面反射系数$k_s$，粗糙度$r$等。把物体的材质参数统称为$\theta$，那么BRDF的函数形式可以具体写为$f(l,v;\theta)$。</p>
+<p>根据BRDF可以定义反射方程如下：<br>$$<br>L_o(v) &#x3D; \int_\Omega f(l,v) \otimes L_i(l)cos\theta_i d\omega_i<br>$$<br>该方程计算表面反射到$v$方向的来自上半球所有方向入射光线贡献的辐射率。符号$\otimes$表示按位相乘，因为$f$和$L_i$都包含RGB三个分量。   </p>
+<p>通过这个方程笔者想详述一下$f$和$L_i$分别是如何对颜色产生影响的：</p>
+<ul>
+<li>对于BRDF函数$f$，以其中的漫反射系数$k_d$举例，其表示为RGB三通道向量，取值范围为[0, 1]，具体解释为<strong>RGB三种频率的光照射到材质表面上分别会有多少比率被漫反射出去</strong>。当入射光全是白光时（RGB含量相同且强度都为1），那么不考虑镜面反射的情况下，$k_d$就表示了物体颜色（这就是为什么许多论文中展示$k_d$都与shading后的颜色类似）；</li>
+<li>对于入射光强$L_i$，也表示为RGB三通道向量，取值范围同样是[0, 1]，具体解释为<strong>RGB三种频率的光在入射光中各自的强度分别是多少</strong>；</li>
+<li>现在两者相乘的含义就十分明确了，即反射比率乘以入射光强度得到出射光强度，这也解释了物体材质与光照共同对观察到的颜色产生影响。</li>
+</ul>
+<h2 id="Texturing"><a href="#Texturing" class="headerlink" title="Texturing"></a>Texturing</h2><p>在实践过程中material经常被表示为texture map。</p>
+
   </article>
   <!-- tag -->
   <div class="mt-12 pt-6 border-t border-gray-200">
@@ -248,6 +262,11 @@
   <!-- prev and next -->
   <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
     <div>
+      
+        <a href="/2024/12/06/%E5%85%BB%E7%8C%AB%E6%9C%89%E6%84%9F/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
+          养猫有感
+        </a>
       
     </div>
     <div>

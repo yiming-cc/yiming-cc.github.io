@@ -224,7 +224,7 @@
         <section class="flex items-center gap-3 text-sm">
           <span class="flex items-center gap-1">
             <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
-            <time>2024-09-18</time>
+            <time>2024-11-22</time>
           </span>
           <span class="text-gray-400">·</span>
           <span class="flex items-center gap-1">
@@ -245,8 +245,8 @@
   <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
     <h2 id="git对信息的存储方式"><a href="#git对信息的存储方式" class="headerlink" title="git对信息的存储方式"></a>git对信息的存储方式</h2><h3 id="直接记录快照，而非差异比较"><a href="#直接记录快照，而非差异比较" class="headerlink" title="直接记录快照，而非差异比较"></a>直接记录快照，而非差异比较</h3><p>与<strong>基于差异</strong>的版本控制系统不同<a href="%E8%BF%99%E7%A7%8D%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F%E4%BB%A5%E6%96%87%E4%BB%B6%E5%8F%98%E6%9B%B4%E5%88%97%E8%A1%A8%E7%9A%84%E6%96%B9%E5%BC%8F%E5%AD%98%E5%82%A8%E4%BF%A1%E6%81%AF">^1</a>，Git把数据看作是对小型文件系统的一系列快照。</p>
 <p>在 Git 中，每当你提交更新或保存项目状态时，它基本上就会<strong>对当时的全部文件创建一个快照并保存这个快照的索引</strong>。 为了效率，如果文件没有修改，Git 不再重新存储该文件，而是只保留一个链接指向之前存储的文件。下面两个图表示了两种方式的差异：</p>
-<p><img src="/2024/09/18/hello-world/image-20211216221448666.png" alt="存储文件差异"></p>
-<p><img src="/2024/09/18/hello-world/image-20211216221459462.png" alt="存储文件快照"></p>
+<p><img src="/2024/11/22/hello-world/image-20211216221448666.png" alt="存储文件差异"></p>
+<p><img src="/2024/11/22/hello-world/image-20211216221459462.png" alt="存储文件快照"></p>
 <h3 id="近乎所有操作都是本地执行的"><a href="#近乎所有操作都是本地执行的" class="headerlink" title="近乎所有操作都是本地执行的"></a>近乎所有操作都是本地执行的</h3><p>在 Git 中的绝大多数操作都只需要访问本地文件和资源，一般不需要来自网络上其它计算机的信息。即Git将文件快照存储在本地数据库内，这样大大减少了与远程服务器连接的时间开销。（更加消耗了本地的内存？）</p>
 <h3 id="三种状态"><a href="#三种状态" class="headerlink" title="三种状态"></a>三种状态</h3><p><strong>已提交（committed）</strong>、<strong>已修改（modified）</strong> 和 <strong>已暂存（staged）</strong>。</p>
 <ul>
@@ -258,7 +258,7 @@
 </li>
 </ul>
 <p>这会让我们的 Git 项目拥有三个阶段：工作区、暂存区以及 Git 目录。</p>
-<p><img src="/2024/09/18/hello-world/image-20211217082417848.png" alt="image-20211217082417848"></p>
+<p><img src="/2024/11/22/hello-world/image-20211217082417848.png" alt="image-20211217082417848"></p>
 <p>基本的 Git 工作流程如下： </p>
 <ol>
 <li>在工作区中修改文件。 </li>
@@ -430,28 +430,28 @@
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git add README test.rb LICENSE</span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&#x27;The initial commit of my project&#x27;</span></span><br></pre></td></tr></table></figure>
 
 <p>Git 仓库中有五个对象：三个 blob 对象（保存着文件快照）、一个 树 对象 （记录着目录结构和 blob 对象索引）以及一个 提交 对象（包含着指向前述树对象的指针和所有提交信息）。</p>
-<p><img src="/2024/09/18/hello-world/image-20220124164121494.png" alt="image-20220124164121494"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124164121494.png" alt="image-20220124164121494"></p>
 <p>做些修改后再次提交，那么这次产生的提交对象会包含一个指向上次提交对象（父对象）的指针。</p>
-<p><img src="/2024/09/18/hello-world/image-20220124164148200.png" alt="image-20220124164148200"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124164148200.png" alt="image-20220124164148200"></p>
 <p><strong>Git 的分支，其实本质上仅仅是指向提交对象的可变指针</strong>。 Git 的默认分支名字是 master。 在多次提交操作之后，你其实已经有一个指向最后那个提交对象的 master 分支。 master 分支会在<strong>每次提交时自动向前移动</strong>。</p>
 <h4 id="分支创建"><a href="#分支创建" class="headerlink" title="分支创建"></a>分支创建</h4><p>Git 是怎么创建新分支的呢？ 很简单，它只是为你创建了一个可以移动的新的指针。 比如，创建一个 testing 分支， 你需要使用 git branch 命令</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git branch testing</span><br></pre></td></tr></table></figure>
 
 <p>这会在<strong>当前所在的提交对象</strong>上创建一个指针。</p>
-<p><img src="/2024/09/18/hello-world/image-20220124164657608.png" alt="image-20220124164657608"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124164657608.png" alt="image-20220124164657608"></p>
 <p><strong>Git通过一个名为HEAD的特殊指针确定当前在哪一个分支上。</strong></p>
-<p><img src="/2024/09/18/hello-world/image-20220124164816418.png" alt="image-20220124164816418"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124164816418.png" alt="image-20220124164816418"></p>
 <p>如图，<code>git branch ..</code>仅仅是创建了一个分支，但当前所在分支仍然是master</p>
 <h4 id="分支切换"><a href="#分支切换" class="headerlink" title="分支切换"></a>分支切换</h4><p>使用命令 <code>git checkout</code> 来进行分支切换，如切换到testing分支中去</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout testing</span><br></pre></td></tr></table></figure>
 
 <p>这样便使 HEAD 指向 testing，<code>git checkout</code> 后不仅可以接分支名，还可以接提交对象的<strong>校验和</strong>，使得Head指向某提交对象。</p>
 <p>注：使用<code>git checkout 34ac2</code> 只会使HEAD指针指向 <code>34ac2</code> 提交对象，不会在该提交对象上创建指针，因此，如果在 <code>34ac2</code> 提交对象上做修改后继续提交，只有HEAD指针会跟随着往前走，此时若切换回master或testing分支，那么新的提交对象将会因为没有指针指向他而无法被 <code>git log</code> 列出（但是仍然可以通过校验和来找到他）</p>
-<p><img src="/2024/09/18/hello-world/image-20220124170951145.png" alt="image-20220124170951145"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124170951145.png" alt="image-20220124170951145"></p>
 <p> 那么<strong>分支的具体作用</strong>是什么呢？再提交一次便可以知道</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;new branch&quot;</span> &gt; README.md</span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&#x27;made a change&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/2024/09/18/hello-world/image-20220124171520923.png" alt="image-20220124171520923"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124171520923.png" alt="image-20220124171520923"></p>
 <p>由图则可以明确分支的作用</p>
 <ol>
 <li><strong>只有 HEAD 指针指向的分支才会随着提交向前移动</strong></li>
@@ -461,7 +461,7 @@
 <p>我们再切换回master分支（<strong>在切换分支之前最好保证工作区的干净，即所有修改已经被提交</strong>），然后再稍作修改后提交</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;divide branch&quot;</span> &gt; README.md</span><br><span class="line">git commit <span class="literal">-m</span> <span class="string">&#x27;made other changes&#x27;</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="/2024/09/18/hello-world/image-20220124173116314.png" alt="image-20220124173116314"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124173116314.png" alt="image-20220124173116314"></p>
 <p>项目产生了分叉，因为刚才你创建了一个新分支，并切换过去进行了一些工作，随后又切换回 master 分支进行了另外一些工作。 上述两次改动针对的是不同分支：你可以在不同分支间不断地来回切换和工作，并在时机成熟时将它们合并起来。 而所有这些工作，你需要的命令只有 branch、checkout 和 commit。</p>
 <p>可以使用 <code>git log --oneline --decorate --graph --all</code> 来查看你的提交历史、各个分支的指向以及项目的分支分叉情况。上图所示的命令结果为</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">* c2b9e (HEAD, master) made other changes</span><br><span class="line">| * <span class="number">87</span>ab2 (testing) made a change</span><br><span class="line">|/</span><br><span class="line">* f30ab add feature <span class="comment">#32 - ability to add new formats to the</span></span><br><span class="line">* <span class="number">34</span>ac2 fixed bug <span class="comment">#1328 - stack overflow under certain conditions</span></span><br><span class="line">* <span class="number">98</span>ca9 initial commit of my project</span><br></pre></td></tr></table></figure>
@@ -473,12 +473,12 @@
 
 <h4 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h4><p>使用命令<code>git merge &lt;branchname&gt;</code>来合并 HEAD 指向的分支和 branchname 分支。</p>
 <h5 id="未经过分叉的合并"><a href="#未经过分叉的合并" class="headerlink" title="未经过分叉的合并"></a>未经过分叉的合并</h5><p>如下，现在 HEAD 指向 master 分支</p>
-<p><img src="/2024/09/18/hello-world/image-20220124175946382.png" alt="image-20220124175946382"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124175946382.png" alt="image-20220124175946382"></p>
 <p>执行命令</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$</span> git merge hotfix</span><br><span class="line">Updating f42c576..<span class="number">3</span>a0874c</span><br><span class="line">Fast<span class="literal">-forward</span></span><br><span class="line"> index.html | <span class="number">2</span> ++</span><br><span class="line"> <span class="number">1</span> file changed, <span class="number">2</span> insertions(+) <span class="comment">#具体信息无所谓</span></span><br><span class="line"> </span><br></pre></td></tr></table></figure>
 
 <p>则得到下图所示结果</p>
-<p><img src="/2024/09/18/hello-world/image-20220124180059200.png" alt="image-20220124180059200"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124180059200.png" alt="image-20220124180059200"></p>
 <p>注意，此时 master 和 hotfix 指向同一个提交对象，<strong>merge 并不会删除某一个分支</strong>，需要我们手动删除</p>
 <p>使用命令 <code>git branch -d &lt;branchname&gt;</code> 来删除一个分支</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$</span> git branch <span class="literal">-d</span> hotfix</span><br><span class="line">Deleted branch hotfix (<span class="number">3</span>a0874c).</span><br></pre></td></tr></table></figure>
@@ -490,14 +490,14 @@
 
 
 
-<p><img src="/2024/09/18/hello-world/image-20220124180818404.png" alt="image-20220124180818404"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124180818404.png" alt="image-20220124180818404"></p>
 <p>此时执行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git merge master</span><br></pre></td></tr></table></figure>
 
 <p>git 会根据三个快照：<strong>两个分支末端所指向的快照（C4 和 C5）</strong>和<strong>两个分支的公共祖先（C2）来完成这次合并</strong>。</p>
-<p><img src="/2024/09/18/hello-world/image-20220124181232584.png" alt="image-20220124181232584"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124181232584.png" alt="image-20220124181232584"></p>
 <p>结果如下</p>
-<p><img src="/2024/09/18/hello-world/image-20220124181304501.png" alt="image-20220124181304501"></p>
+<p><img src="/2024/11/22/hello-world/image-20220124181304501.png" alt="image-20220124181304501"></p>
 <p>和之前分支指针推进不同的是，Git 将此次三方合并的结果做了一个新的快照并且自动创建一个新的提 交指向它。 这个被称作一次合并提交，它的特别之处在于他有不止一个父提交。</p>
 <p>此时已经不再需要分支iss53，使用上述命令删除其即可。</p>
 <h5 id="遇到冲突时的合并"><a href="#遇到冲突时的合并" class="headerlink" title="遇到冲突时的合并"></a>遇到冲突时的合并</h5><p>p79</p>
@@ -518,7 +518,7 @@
 <h4 id="拉取"><a href="#拉取" class="headerlink" title="拉取"></a>拉取</h4><p>当 <code>git fetch</code> 命令从服务器上抓取本地没有的数据时，它并不会修改工作目录中的内容。 它只会获取数据然后让你自己合并。然而，有一个命令叫作 <code>git pull</code> 在大多数情况下它的含义是一个 <code>git fetch</code> 紧接着一个 <code>git merge</code> 命令。</p>
 <p>p98</p>
 <h4 id="删除远程分支"><a href="#删除远程分支" class="headerlink" title="删除远程分支"></a>删除远程分支</h4><p>使用命令 <code>git push &lt;remote&gt; --delete &lt;branch&gt;</code> 来删除远程仓库中的分支。（需要有删除权限）</p>
-<h2 id="服务器上的Git"><a href="#服务器上的Git" class="headerlink" title="服务器上的Git"></a>服务器上的Git</h2><h2 id="ssh-配置"><a href="#ssh-配置" class="headerlink" title="ssh 配置"></a>ssh 配置</h2><h3 id="配置ssh密钥登陆服务器"><a href="#配置ssh密钥登陆服务器" class="headerlink" title="配置ssh密钥登陆服务器"></a>配置ssh密钥登陆服务器</h3><p><img src="/2024/09/18/hello-world/image-20230422151911894.png" alt="image-20230422151911894"></p>
+<h2 id="服务器上的Git"><a href="#服务器上的Git" class="headerlink" title="服务器上的Git"></a>服务器上的Git</h2><h2 id="ssh-配置"><a href="#ssh-配置" class="headerlink" title="ssh 配置"></a>ssh 配置</h2><h3 id="配置ssh密钥登陆服务器"><a href="#配置ssh密钥登陆服务器" class="headerlink" title="配置ssh密钥登陆服务器"></a>配置ssh密钥登陆服务器</h3><p><img src="/2024/11/22/hello-world/image-20230422151911894.png" alt="image-20230422151911894"></p>
 <ol>
 <li><p><strong>客户端</strong>生成公钥私钥对</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">local</span>$ ssh-keygen</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/user/.ssh/id_rsa):</span><br><span class="line">Created directory <span class="string">&#x27;/home/user/.ssh&#x27;</span>.</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /home/user/.ssh/id_rsa</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /home/user/.ssh/id_rsa.pub</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:47VkvSjlFhKRgz/6RYdXM2EULtk9TQ65PDWJjYC5Jys user@<span class="built_in">local</span></span><br><span class="line">The key<span class="string">&#x27;s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 2048]----+</span></span><br><span class="line"><span class="string">|       ...o...X+o|</span></span><br><span class="line"><span class="string">|      . o+   B=Oo|</span></span><br><span class="line"><span class="string">|       .....ooo*=|</span></span><br><span class="line"><span class="string">|        o+ooo.+ .|</span></span><br><span class="line"><span class="string">|       .SoXo.  . |</span></span><br><span class="line"><span class="string">|      .E X.+ .   |</span></span><br><span class="line"><span class="string">|       .+.= .    |</span></span><br><span class="line"><span class="string">|        .o       |</span></span><br><span class="line"><span class="string">|                 |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure>

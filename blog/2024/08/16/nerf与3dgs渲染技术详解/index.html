@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="author" content="YMC">
+
+
+
+
+
+<title>nerf与3dgs渲染技术详解 | Blog</title>
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
+
+
+
+<script src="/lib/jquery.min.js"></script>
+
+
+<script src="/lib/iconify-icon.min.js"></script>
+
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+  };
+</script>
+
+
+<script src="/lib/nprogress/nprogress.js"></script>
+
+<script>
+  $(document).ready(() => {
+    NProgress.configure({
+      showSpinner: false,
+    });
+    NProgress.start();
+    $("#nprogress .bar").css({
+      background: "#de7441",
+    });
+    $("#nprogress .peg").css({
+      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
+    });
+    $("#nprogress .spinner-icon").css({
+      "border-top-color": "#de7441",
+      "border-left-color": "#de7441",
+    });
+    setTimeout(function () {
+      NProgress.done();
+      $(".fade").removeClass("out");
+    }, 800);
+  });
+</script>
+
+<script>
+  (function () {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+    if (setting === "dark" || (prefersDark && setting !== "light"))
+      document.documentElement.classList.toggle("dark", true);
+    let isDark = document.documentElement.classList.contains("dark");
+  })();
+
+  $(document).ready(function () {
+    // init icon
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = document.documentElement.classList.contains("dark");
+    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+
+    function toggleGiscusTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const giscusFrame = document.querySelector("iframe.giscus-frame");
+      if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: isDark ? "dark" : "light",
+              },
+            },
+          },
+          "https://giscus.app"
+        );
+      }
+    }
+
+
+    // toggle dark mode
+    function toggleDark() {
+      let isDark = document.documentElement.classList.contains("dark");
+      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+      isDark = !isDark;
+      document.documentElement.classList.toggle("dark", isDark);
+      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+      if (prefersDark === isDark) {
+        localStorage.setItem("hexo-color-scheme", "auto");
+      } else {
+        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
+      }
+      toggleGiscusTheme();
+    }
+    $("#toggle-dark").click(toggleDark);
+
+    // listen dark mode change
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+        if (setting === "auto") {
+          document.documentElement.classList.toggle("dark", e.matches);
+          $("#theme-icon").attr(
+            "icon",
+            e.matches ? "ri:moon-line" : "ri:sun-line"
+          );
+          toggleGiscusTheme();
+        }
+      });
+  });
+</script>
+
+
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
+  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
+  <div class="max-auto">
+    <nav class="flex items-center text-base">
+      <a href="/" class="group">
+        <h2 class="font-medium tracking-tighterp text-l p-2">
+          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="Blog" />
+          Blog
+        </h2>
+      </a>
+      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+        nerf与3dgs渲染技术详解
+      </div>
+      <div class="flex-1"></div>
+      <div class="flex items-center gap-3">
+        
+          <a class="hidden sm:flex" href="/archives">Posts</a>
+        
+        
+          
+            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/xbmlz">
+              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
+            </a>
+          
+        
+        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
+          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+        </a>
+        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
+          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
+        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
+          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
+        </span>
+        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
+          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
+        </span>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
+  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
+    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
+        </li>
+      
+    </ul>
+  </div>
+  <div class="mask bg-black/20 absolute inset-0"></div>
+</div>
+
+  <main class="pt-14">
+    <!-- css -->
+
+<link rel="stylesheet" href="/lib/fancybox/fancybox.min.css">
+
+
+<link rel="stylesheet" href="/lib/tocbot/tocbot.min.css">
+
+<!-- toc -->
+
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
+<section class="px-6 max-w-prose mx-auto md:px-0">
+  <!-- header -->
+  <header class="overflow-hidden pt-6 pb-6 md:pt-12">
+    <div class="pt-4 md:pt-6">
+      <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
+        nerf与3dgs渲染技术详解
+      </h1>
+      <div>
+        <section class="flex items-center gap-3 text-sm">
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
+            <time>2024-11-22</time>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
+            <span>4 min</span>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
+            <span>1.2k words</span>
+          </span>
+          
+        </section>
+      </div>
+    </div>
+  </header>
+  <!-- content -->
+  <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
+    <p><strong>渲染（render）</strong>，指以 3D 空间中排列的许多几何物体组成的场景为背景，计算出从特定视点看到的物体的 2D 图像。渲染通常有两种组织方式：</p>
+<ul>
+<li><strong>以物体为导向的渲染（<em>object-order rendering</em>）</strong>：考虑每个物体（基元，primitive）对其占据的所有像素的影响，简单来说即外层循环为物体。这种方式通常更加高效。e.g 3DGS使用的光栅化渲染算法。</li>
+<li><strong>以像素为导向的渲染（<em>image-order rendering</em>）</strong>：考虑每个像素受到的所有物体的影响，简单来说即外层循环为像素。这种方式通常更容易实现并且更灵活。e.g NeRF使用的光线追踪（Ray Tracing）算法。</li>
+</ul>
+<p><strong>光栅化（rasterize）</strong>，指找到图像中被某几何基元（e.g triangle face）影响的所有像素的过程。以物体为导向的渲染又称为通过光栅化渲染（rendering by rasterization）。</p>
+<h2 id="NeRF-渲染技术详解"><a href="#NeRF-渲染技术详解" class="headerlink" title="NeRF 渲染技术详解"></a>NeRF 渲染技术详解</h2><p>Nerf的渲染主要分为两个部分：<strong>光线追踪（Ray Tracing）</strong>和<strong>体渲染（Volume Rendering）</strong>。</p>
+<h3 id="光线追踪（Ray-Tracing）"><a href="#光线追踪（Ray-Tracing）" class="headerlink" title="光线追踪（Ray Tracing）"></a>光线追踪（Ray Tracing）</h3><p>光线追踪是一种以像素为导向的渲染算法，一个基本的光线追踪器通常由以下三个部分组成：</p>
+<ol>
+<li><em>光线生成</em>，根据相机的几何模型计算每个像素光线的原点和方向。</li>
+<li><em>光线与物体相交</em>，计算最早与光线相交物体的交点。</li>
+<li><em>着色（shading）</em>，基于交点，表面法向量等信息，计算像素值。</li>
+</ol>
+<p>基本的光线追踪程序可以表示如下：</p>
+<p><img src="/2024/11/22/hello-world/%E6%9C%AF%E8%AF%A6%E8%A7%A3/image-20240826133524645.png"></p>
+<p>以NeRF中常使用的针孔相机模型为例，假设相机内参为$K$，外参为$[R,o]$。对于世界坐标系下的某个3D点$P_{w}$，可以求得其在像素平面上的坐标$P_{uv}$为：<br>$$<br>ZP_{uv}&#x3D;Z\left[\begin{array}{c} u \ v \ 1\end{array}\right]&#x3D;K(RP_w+o)<br>$$<br>那么反过来，当我们想计算从相机原点射向某个像素的光线时，我们首先要将该像素反向投影到世界坐标系下，则有：<br>$$<br>P_w&#x3D;R^{-1}(K^{-1}ZP_{uv}-o)<br>$$<br>我们并不需要知道$Z$的具体值，任意取$Z$值求得光线上某点坐标$P_w’$，就可以根据相机原点$\mathbf{o}$以及$P_w’$求得光线方向$\mathbf{d}&#x3D;Normailize(o-P_w’)$，最后的光线方程为：<br>$$<br>\mathbf{r}&#x3D;\mathbf{o}+t\mathbf{d},\ \ t&gt;0<br>$$<br>在NeRF中我们构建了一个神经辐射场，因此2、3步骤会与一般的光线追踪算法有差异，采用了体渲染的方式。</p>
+<h3 id="体渲染（Volume-Rendering）"><a href="#体渲染（Volume-Rendering）" class="headerlink" title="体渲染（Volume Rendering）"></a>体渲染（Volume Rendering）</h3><p>RGB颜色值与光有着复杂的联系，具体可以参考<a target="_blank" rel="noopener" href="https://ciel1012.github.io/2020/01/11/rtr8/">Light and Color</a>博客，详细介绍了如何精确的量化光线从而计算RGB值。在此处介绍体渲染的流程中，笔者简单的将射向像素平面的出射光<strong>辐射强度</strong>定义为某个像素的RBG值（实际两者并不相等），从而简化后面的推导。</p>
+<h2 id="3DGS-渲染技术详解"><a href="#3DGS-渲染技术详解" class="headerlink" title="3DGS 渲染技术详解"></a>3DGS 渲染技术详解</h2><p>3DGS的渲染遵循标准的以物体为导向的渲染流程，如下图：</p>
+<p><img src="/2024/11/22/hello-world/%E6%9C%AF%E8%AF%A6%E8%A7%A3/image-20240828111714430.png"></p>
+<p>这个流程中的核心步骤为光栅化（Rasterization），故这里，笔者将重点讲述光栅化的细节，而其他的步骤则称为光栅化的前后处理步骤。</p>
+<h3 id="光栅化（Rasterization）"><a href="#光栅化（Rasterization）" class="headerlink" title="光栅化（Rasterization）"></a>光栅化（Rasterization）</h3><p>对于每个基元（primitive，这里指已经投影到像素屏幕的基元），光栅化主要完成两个工作：<strong>枚举被基元覆盖的所有像素并进行属性插值</strong>。光栅化对每个被基元覆盖的像素输出一个或多个<em>段片（fragment）</em>，这些段片存储着针对特定像素的属性值，以及覆盖该像素的基元id（不同像素可能被同一个基元覆盖，因此<strong>一个基元可以构成不同像素的多个段片</strong>）等。具体来说，光栅化的输出为维度为$(H, W, N, M)$向量，即共有$H\times W\times N$个段片，其中$(H,W)$是图片的长和宽；$N$为覆盖该像素的基元数，多余的用0填充；$M$为属性维度。</p>
+<p>以三角形的光栅化举例，假设我们有一个2D三角形，三个点的像素坐标为$\mathbf{p}_0&#x3D;(x_0,y_0), \mathbf{p}_1&#x3D;(x_1,y_1),\mathbf{p}_2&#x3D;(x_2,y_2)$，它们的颜色属性分别为$c_0, c_1,c_2$。那么可以简单写出该三角形的光栅化代码如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">xmin = floor(xi)</span><br><span class="line">xmax = ceiling(xi)</span><br><span class="line">ymin = floor(yi)</span><br><span class="line">ymax = ceiling(yi)</span><br><span class="line">for y = ymin to ymax do</span><br><span class="line">	for x = xmin to xmax do</span><br><span class="line">    	alpha = f12(x,y)/f12(x0,y0)</span><br><span class="line">    	beta = f20(x,y)/f20(x1,y1)</span><br><span class="line">    	gama = f01(x,y)/f01(x2,y2)</span><br><span class="line">    	if (alpha &gt; 0 and beta &gt; 0 and gama &gt; 0) then</span><br><span class="line">    		c = alpha*c0 + beta*c1 + gama*c2</span><br></pre></td></tr></table></figure>
+
+<p>用这样的代码进行光栅化，就可以获取如下光栅化图像：</p>
+<p><img src="/2024/11/22/hello-world/%E6%9C%AF%E8%AF%A6%E8%A7%A3/image-20240828135742536.png"></p>
+<h3 id="光栅化的前后步骤"><a href="#光栅化的前后步骤" class="headerlink" title="光栅化的前后步骤"></a>光栅化的前后步骤</h3><h2 id="扩展一：-Gaussian-Opacity-Field"><a href="#扩展一：-Gaussian-Opacity-Field" class="headerlink" title="扩展一： Gaussian Opacity Field"></a>扩展一： Gaussian Opacity Field</h2><h2 id="扩展二：-DMesh"><a href="#扩展二：-DMesh" class="headerlink" title="扩展二： DMesh"></a>扩展二： DMesh</h2>
+  </article>
+  <!-- tag -->
+  <div class="mt-12 pt-6 border-t border-gray-200">
+    
+  </div>
+  <!-- prev and next -->
+  <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+    <div>
+      
+        <a href="/2024/09/24/%E5%B8%B8%E8%A7%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9D%90%E6%A0%87%E7%B3%BB%E4%B9%A0%E4%BF%97%E6%80%BB%E7%BB%93/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
+          常见系统的坐标系习俗总结
+        </a>
+      
+    </div>
+    <div>
+      
+        <a href="/2024/08/11/mesh%E7%94%9F%E6%88%90%E8%AE%BA%E6%96%87%E6%80%BB%E7%BB%93/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          mesh生成论文总结
+          <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
+        </a>
+      
+    </div>
+  </div>
+  <!-- comment -->
+  <div class="article-comments mt-12">
+    
+
+  </div>
+</section>
+<!-- js inspect -->
+
+<script src="/lib/clipboard.min.js"></script>
+
+
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const maraidConfig = {
+      theme: "default",
+      logLevel: 3,
+      flowchart: { curve: "linear" },
+      gantt: { axisFormat: "%m/%d/%Y" },
+      sequence: { actorMargin: 50 },
+    };
+    mermaid.initialize(maraidConfig);
+  });
+</script>
+
+
+
+<script src="/lib/fancybox/fancybox.umd.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+    $('.post-content').each(function(i){
+      $(this).find('img').each(function(){
+        if ($(this).parent().hasClass('fancybox') || $(this).parent().is('a')) return;
+        var alt = this.alt;
+        if (alt) $(this).after('<span class="fancybox-alt">' + alt + '</span>');
+        $(this).wrap('<a class="fancybox-img" href="' + this.src + '" data-fancybox=\"gallery\" data-caption="' + alt + '"></a>')
+      });
+      $(this).find('.fancybox').each(function(){
+        $(this).attr('rel', 'article' + i);
+      });
+    });
+
+    Fancybox.bind('[data-fancybox="gallery"]', {
+        // options
+    })
+  })
+</script>
+
+<!-- tocbot begin -->
+
+<script src="/lib/tocbot/tocbot.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+      tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.post-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.post-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+        // For headings inside relative or absolute positioned containers within content.
+        hasInnerContainers: true,
+    });
+  })
+</script>
+<!-- tocbot end -->
+
+
+  </main>
+  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
+  <!-- busuanzi -->
+  
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Busuanzi Analytics -->
+<div class="flex items-center gap-2">
+  <span>Visitors</span>
+  <span id="busuanzi_value_site_uv"></span>
+  <span>Page Views</span>
+  <span id="busuanzi_value_site_pv"></span>
+</div>
+<!-- End Busuanzi Analytics -->
+
+
+  <!-- copyright -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
+    <span>© 2022</span>
+    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
+    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
+  </div>
+  <!-- powered by -->
+  <div class="flex items-center gap-2">
+    <span>Powered by</span>
+    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
+    <span>&</span>
+    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
+  </div>
+
+</footer>
+
+  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
+    <span class="flex justify-center items-center text-sm">
+      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
+      <span id="scrollpercent"><span>0</span> %</span>
+    </span>
+  </div>
+  
+<script src="/js/main.js"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      const mapleCount = "10";
+      const speed = "0.5";
+      const mapleEl = document.getElementById("maple");
+      const maples = Array.from({ length: mapleCount }).map(() => {
+        const maple = document.createElement("div");
+        const scale = Math.random() * 0.5 + 0.5;
+        const offset = Math.random() * 2 - 1;
+        const x = Math.random() * mapleEl.clientWidth;
+        const y = -Math.random() * mapleEl.clientHeight;
+        const duration = 10 / speed;
+        const delay = -duration;
+        maple.className = "maple";
+        maple.style.width = `${24 * scale}px`;
+        maple.style.height = `${24 * scale}px`;
+        maple.style.left = `${x}px`;
+        maple.style.top = `${y}px`;
+        maple.style.setProperty("--maple-fall-offset", offset);
+        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
+        maple.style.animation = `fall ${duration}s linear infinite`;
+        maple.style.animationDelay = `${delay}s`;
+        mapleEl.appendChild(maple)
+        return maple
+      })
+    });
+  </script>
+  
+
+
+  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
+</body>
+
+</html>

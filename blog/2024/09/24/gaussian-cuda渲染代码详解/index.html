@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <meta name="author" content="YMC">
+
+
+
+
+
+<title>gaussian cuda渲染代码详解 | Blog</title>
+
+
+
+<link rel="icon" href="/favicon.png">
+
+
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
+
+
+
+<script src="/lib/jquery.min.js"></script>
+
+
+<script src="/lib/iconify-icon.min.js"></script>
+
+
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+  };
+</script>
+
+
+<script src="/lib/nprogress/nprogress.js"></script>
+
+<script>
+  $(document).ready(() => {
+    NProgress.configure({
+      showSpinner: false,
+    });
+    NProgress.start();
+    $("#nprogress .bar").css({
+      background: "#de7441",
+    });
+    $("#nprogress .peg").css({
+      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
+    });
+    $("#nprogress .spinner-icon").css({
+      "border-top-color": "#de7441",
+      "border-left-color": "#de7441",
+    });
+    setTimeout(function () {
+      NProgress.done();
+      $(".fade").removeClass("out");
+    }, 800);
+  });
+</script>
+
+<script>
+  (function () {
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+    if (setting === "dark" || (prefersDark && setting !== "light"))
+      document.documentElement.classList.toggle("dark", true);
+    let isDark = document.documentElement.classList.contains("dark");
+  })();
+
+  $(document).ready(function () {
+    // init icon
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDark = document.documentElement.classList.contains("dark");
+    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+
+    function toggleGiscusTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      const giscusFrame = document.querySelector("iframe.giscus-frame");
+      if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage(
+          {
+            giscus: {
+              setConfig: {
+                theme: isDark ? "dark" : "light",
+              },
+            },
+          },
+          "https://giscus.app"
+        );
+      }
+    }
+
+
+    // toggle dark mode
+    function toggleDark() {
+      let isDark = document.documentElement.classList.contains("dark");
+      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+      isDark = !isDark;
+      document.documentElement.classList.toggle("dark", isDark);
+      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
+      if (prefersDark === isDark) {
+        localStorage.setItem("hexo-color-scheme", "auto");
+      } else {
+        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
+      }
+      toggleGiscusTheme();
+    }
+    $("#toggle-dark").click(toggleDark);
+
+    // listen dark mode change
+    window
+      .matchMedia("(prefers-color-scheme: dark)")
+      .addEventListener("change", (e) => {
+        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
+        if (setting === "auto") {
+          document.documentElement.classList.toggle("dark", e.matches);
+          $("#theme-icon").attr(
+            "icon",
+            e.matches ? "ri:moon-line" : "ri:sun-line"
+          );
+          toggleGiscusTheme();
+        }
+      });
+  });
+</script>
+
+
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
+  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
+  <div class="max-auto">
+    <nav class="flex items-center text-base">
+      <a href="/" class="group">
+        <h2 class="font-medium tracking-tighterp text-l p-2">
+          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="Blog" />
+          Blog
+        </h2>
+      </a>
+      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
+        gaussian cuda渲染代码详解
+      </div>
+      <div class="flex-1"></div>
+      <div class="flex items-center gap-3">
+        
+          <a class="hidden sm:flex" href="/archives">Posts</a>
+        
+        
+          
+            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/xbmlz">
+              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
+            </a>
+          
+        
+        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
+          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+        </a>
+        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
+          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        </a>
+      </div>
+      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
+        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
+          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
+        </span>
+        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
+          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
+        </span>
+      </div>
+    </nav>
+  </div>
+</header>
+<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
+  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
+    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
+      
+        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
+          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
+        </li>
+      
+    </ul>
+  </div>
+  <div class="mask bg-black/20 absolute inset-0"></div>
+</div>
+
+  <main class="pt-14">
+    <!-- css -->
+
+<link rel="stylesheet" href="/lib/fancybox/fancybox.min.css">
+
+
+<link rel="stylesheet" href="/lib/tocbot/tocbot.min.css">
+
+<!-- toc -->
+
+  <!-- tocbot -->
+<nav class="post-toc toc text-sm w-48 relative top-32 right-0 opacity-70 hidden lg:block" style="position: fixed !important;"></nav>
+
+
+<section class="px-6 max-w-prose mx-auto md:px-0">
+  <!-- header -->
+  <header class="overflow-hidden pt-6 pb-6 md:pt-12">
+    <div class="pt-4 md:pt-6">
+      <h1 id="article-title" class="text-[2rem] font-bold leading-snug mb-4 md:mb-6 md:text-[2.6rem]">
+        gaussian cuda渲染代码详解
+      </h1>
+      <div>
+        <section class="flex items-center gap-3 text-sm">
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="carbon-calendar" ></iconify-icon>
+            <time>2024-09-27</time>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="ic:round-access-alarm" ></iconify-icon>
+            <span>8 min</span>
+          </span>
+          <span class="text-gray-400">·</span>
+          <span class="flex items-center gap-1">
+            <iconify-icon width="18" icon="icon-park-outline:font-search" ></iconify-icon>
+            <span>1.8k words</span>
+          </span>
+          
+        </section>
+      </div>
+    </div>
+  </header>
+  <!-- content -->
+  <article class="post-content prose m-auto slide-enter-content dark:prose-invert">
+    <p>3D Gaussian的渲染代码采用了十分标准的CUDA Extension的编写方式，对于初次编写CUDA Extension的人来说一份很好的学习资料。下面将首先介绍项目的文件层次，然后分别讲解Forward和Backward的部分。</p>
+<p>项目的文件层次大概如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">|-cuda_rasterizer</span><br><span class="line">    |-...</span><br><span class="line">|-diff_gaussian_rasterization</span><br><span class="line">    |-...</span><br><span class="line">|-third_party</span><br><span class="line">    |-...</span><br><span class="line">ext.cpp</span><br><span class="line">rasterize_points.cu</span><br><span class="line">rasterize_points.h</span><br><span class="line">setup.py</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><strong>setup.py</strong>：利用setuptools编译并封装CUDA代码</li>
+<li><strong>ext.cpp</strong>：利用pybind11将C++函数bind到Python中</li>
+<li><strong>rasterize_points.cu, rasterize_points.h</strong>：渲染Foward和Backward的接口的实现</li>
+<li><strong>cuda_rasterizer</strong>：渲染Forward和Backward的Cuda函数实现</li>
+<li><strong>diff_gaussian_rasterization</strong>：渲染的Python接口</li>
+<li><strong>third_party</strong>：glm第三方库，是头文件库，只需要inlcude_directories添加头文件路径即可。</li>
+</ul>
+<h1 id="Forward"><a href="#Forward" class="headerlink" title="Forward"></a>Forward</h1><h3 id="RasterizeGaussiansCUDA"><a href="#RasterizeGaussiansCUDA" class="headerlink" title="RasterizeGaussiansCUDA"></a>RasterizeGaussiansCUDA</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::tuple&lt;<span class="type">int</span>, torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor, torch::Tensor&gt;</span></span><br><span class="line"><span class="function"><span class="title">RasterizeGaussiansCUDA</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; background,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; means3D,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> torch::Tensor&amp; colors,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> torch::Tensor&amp; opacity,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; scales,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; rotations,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span> scale_modifier,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; cov3D_precomp,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; viewmatrix,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; projmatrix,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span> tan_fovx, </span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span> tan_fovy,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> <span class="type">int</span> image_height,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="type">const</span> <span class="type">int</span> image_width,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; sh,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">int</span> degree,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> torch::Tensor&amp; campos,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">bool</span> prefiltered,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">bool</span> debug)</span></span></span><br></pre></td></tr></table></figure>
+<p>C++ 前向渲染接口，实现输出向量的内存分配，Buffer函数构建等。这里有一个比较有趣的函数如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @brief 构建张量t的resize函数</span></span><br><span class="line"><span class="comment">// @param t 输入的torch张量，lambda的resize都是对这个张量进行的</span></span><br><span class="line"><span class="comment">// @ret 返回一个lambda函数，用于对t进行resize，参数N表示resize后的长度，返回指向t的char*指针</span></span><br><span class="line"><span class="function">std::function&lt;<span class="type">char</span>*<span class="params">(<span class="type">size_t</span> N)</span>&gt; <span class="title">resizeFunctional</span><span class="params">(torch::Tensor&amp; t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> lambda = [&amp;t](<span class="type">size_t</span> N) &#123;</span><br><span class="line">        t.<span class="built_in">resize_</span>(&#123;(<span class="type">long</span> <span class="type">long</span>)N&#125;);</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">reinterpret_cast</span>&lt;<span class="type">char</span>*&gt;(t.<span class="built_in">contiguous</span>().<span class="built_in">data_ptr</span>());</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> lambda;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接口通过上面这个函数构建了三个resize函数，分别用作于<code>geometryBuffer</code>, <code>imageBuffer</code>和<code>binningBuffer</code>的内存分配。</p>
+<h3 id="CudaRasterizer-Rasterizer-forward"><a href="#CudaRasterizer-Rasterizer-forward" class="headerlink" title="CudaRasterizer::Rasterizer::forward"></a>CudaRasterizer::Rasterizer::forward</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> CudaRasterizer::Rasterizer::forward(</span><br><span class="line">	std::function&lt;<span class="type">char</span>* (<span class="type">size_t</span>)&gt; geometryBuffer,</span><br><span class="line">	std::function&lt;<span class="type">char</span>* (<span class="type">size_t</span>)&gt; binningBuffer,</span><br><span class="line">	std::function&lt;<span class="type">char</span>* (<span class="type">size_t</span>)&gt; imageBuffer,</span><br><span class="line">	<span class="type">const</span> <span class="type">int</span> P, <span class="type">int</span> D, <span class="type">int</span> M,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* background,</span><br><span class="line">	<span class="type">const</span> <span class="type">int</span> width, <span class="type">int</span> height,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* means3D,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* shs,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* colors_precomp,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* opacities,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* scales,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span> scale_modifier,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* rotations,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* cov3D_precomp,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* viewmatrix,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* projmatrix,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* cam_pos,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span> tan_fovx, <span class="type">float</span> tan_fovy,</span><br><span class="line">	<span class="type">const</span> <span class="type">bool</span> prefiltered,</span><br><span class="line">	<span class="type">float</span>* out_color,</span><br><span class="line">	<span class="type">float</span>* out_depth,</span><br><span class="line">	<span class="type">float</span>* out_alpha,</span><br><span class="line">	<span class="type">int</span>* radii,</span><br><span class="line">	<span class="type">bool</span> debug)</span><br></pre></td></tr></table></figure>
+
+<p>C++前向渲染实现，负责调用各个CUDA函数完成各个功能并进行逻辑整合。主要分为内存分配，预处理，Tile-based渲染变量缓冲构建和渲染四个部分。</p>
+<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4><p>主要通过以下函数实现内存分配：</p>
+<p><strong>obtain</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @brief 实现内存对齐与内存分配</span></span><br><span class="line"><span class="comment">// @param chunk 起始地址指针，从对齐后的该地址开始分配内存</span></span><br><span class="line"><span class="comment">// @param ptr 完成分配后的初始地址指针，即chunk对齐后的地址</span></span><br><span class="line"><span class="comment">// @param count 分配的内存“个数”，实际的分配字节数为count * size_of(T)</span></span><br><span class="line"><span class="comment">// @param alignment 地址对齐数</span></span><br><span class="line"><span class="comment">// @ret 无，用引用的方式改变了两个指针，chunk指向分配内存结尾，ptr指向内存分配开头</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">obtain</span><span class="params">(<span class="type">char</span>*&amp; chunk, T*&amp; ptr, std::<span class="type">size_t</span> count, std::<span class="type">size_t</span> alignment)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 对齐后的地址，用size_t表示</span></span><br><span class="line">    std::<span class="type">size_t</span> offset = (<span class="built_in">reinterpret_cast</span>&lt;std::<span class="type">uintptr_t</span>&gt;(chunk) + alignment - <span class="number">1</span>) &amp; ~(alignment - <span class="number">1</span>);</span><br><span class="line">    <span class="comment">// 转化为T*指针，ptr指向开头</span></span><br><span class="line">    ptr = <span class="built_in">reinterpret_cast</span>&lt;T*&gt;(offset);</span><br><span class="line">    <span class="comment">// 计算内存分配结尾，ptr指向结尾</span></span><br><span class="line">    chunk = <span class="built_in">reinterpret_cast</span>&lt;<span class="type">char</span>*&gt;(ptr + count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>from_chunk</strong>（以<code>GeometryState</code>为例）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @brief 计算各个子缓冲区的首地址</span></span><br><span class="line"><span class="comment">// @param chunk 起始地址指针，从该地址开始分配内存</span></span><br><span class="line"><span class="comment">// @param P 为每个子缓冲区分配的内存“个数”</span></span><br><span class="line"><span class="comment">// @ret 返回分配完内存的缓冲区实例，其中每个子缓冲区指针指向各个子缓冲区的首地址。chunk指向缓冲区尾</span></span><br><span class="line">CudaRasterizer::GeometryState CudaRasterizer::GeometryState::<span class="built_in">fromChunk</span>(<span class="type">char</span>*&amp; chunk, <span class="type">size_t</span> P)</span><br><span class="line">&#123;</span><br><span class="line">	GeometryState geom;</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.depths, P, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.clamped, P * <span class="number">3</span>, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.internal_radii, P, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.means2D, P, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.cov3D, P * <span class="number">6</span>, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.conic_opacity, P, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.rgb, P * <span class="number">3</span>, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.tiles_touched, P, <span class="number">128</span>);</span><br><span class="line">	cub::DeviceScan::<span class="built_in">InclusiveSum</span>(<span class="literal">nullptr</span>, geom.scan_size, geom.tiles_touched, geom.tiles_touched, P);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.scanning_space, geom.scan_size, <span class="number">128</span>);</span><br><span class="line">	<span class="built_in">obtain</span>(chunk, geom.point_offsets, P, <span class="number">128</span>);</span><br><span class="line">	<span class="keyword">return</span> geom;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>required</strong></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @brief 计算需要的内存字节数</span></span><br><span class="line"><span class="comment">// @param P 需要分配的内存“个数”（Gaussian num）</span></span><br><span class="line"><span class="comment">// @ret 需要的内存字节数</span></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt; </span></span><br><span class="line"><span class="function"><span class="type">size_t</span> <span class="title">required</span><span class="params">(<span class="type">size_t</span> P)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// nullptr is 0x0</span></span><br><span class="line">    <span class="type">char</span>* size = <span class="literal">nullptr</span>;</span><br><span class="line">    T::<span class="built_in">fromChunk</span>(size, P);</span><br><span class="line">    <span class="keyword">return</span> ((<span class="type">size_t</span>)size) + <span class="number">128</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>介绍完了上面三个函数，这个部分完成的功能就十分容易理解了。</p>
+<ul>
+<li>通过<code>required</code>函数计算缓冲区需要的字节数；</li>
+<li>调用上一节讲到的resize lambda表达式，进行总内存分配，并获取首指针<code>chunk</code>；</li>
+<li>调用<code>fromChunk</code>函数计算各个子缓冲区的首地址</li>
+</ul>
+<h4 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h4><p>通过以下CUDA函数实现预处理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @tparam C feature通道数，默认rgb三通道</span></span><br><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="type">int</span> C&gt;</span></span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">preprocessCUDA</span><span class="params">(<span class="type">int</span> P, <span class="type">int</span> D, <span class="type">int</span> M,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* orig_points,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> glm::vec3* scales,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span> scale_modifier,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> glm::vec4* rotations,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* opacities,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* shs,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">bool</span>* clamped,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* cov3D_precomp,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* colors_precomp,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* viewmatrix,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span>* projmatrix,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> glm::vec3* cam_pos,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">int</span> W, <span class="type">int</span> H,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span> tan_fovx, <span class="type">float</span> tan_fovy,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> <span class="type">float</span> focal_x, <span class="type">float</span> focal_y,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">int</span>* radii,</span></span></span><br><span class="line"><span class="params"><span class="function">	float2* points_xy_image,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">float</span>* depths,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">float</span>* cov3Ds,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">float</span>* rgb,</span></span></span><br><span class="line"><span class="params"><span class="function">	float4* conic_opacity,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">const</span> dim3 grid,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">uint32_t</span>* tiles_touched,</span></span></span><br><span class="line"><span class="params"><span class="function">	<span class="type">bool</span> prefiltered)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>分配(P+255)&#x2F;256 blocks，256 threads per block。即每个thread处理一个3D Gaussian。处理的基本流程：</p>
+<ol>
+<li><p>判断该3DGS是否在视椎体内，注意这里只判断了3DGS的深度不小于0.2。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__forceinline__ __device__ <span class="type">bool</span> <span class="title">in_frustum</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据rotation和scaling，计算3D covariance($\Sigma$)，后通过公式$\Sigma’&#x3D;JW\Sigma W^TJ^T$计算NDC space中的covariance，由于渲染的时候可以忽略第三行和第三列，因此可以把$\Sigma’$视作二维方差。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__device__ <span class="type">void</span> <span class="title">computeCov3D</span><span class="params">(...)</span></span>;</span><br><span class="line"><span class="function">__device__ float3 <span class="title">computeCov2D</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据$\Sigma’$计算椭圆的两个半径，并以较大的那个半径乘3（$3\sigma$）作为高斯圆的半径，判断该高斯圆overlap的tile数。</p>
+</li>
+</ol>
+   <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__forceinline__ __device__ <span class="type">void</span> <span class="title">getRect</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li><p>将SH转化为3通道RGB。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__device__ glm::vec3 <span class="title">computeColorFromSH</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="Tile-based渲染变量缓冲构建"><a href="#Tile-based渲染变量缓冲构建" class="headerlink" title="Tile-based渲染变量缓冲构建"></a>Tile-based渲染变量缓冲构建</h4><p>假设gaussian $g_i$覆盖的tile数为$k_i$，那么该步骤把每个gaussian $g_i$复制$k_i$次，最后的gaussians数量为$\sum_{i&#x3D;1}^P k_i$，复制之后的所有gaussian都会参与渲染，称为gaussian instance，对这些gaussian instances按照tile_id，depth进行排序，方便之后的划分。对每个tile进行gaussian instance的划分（显然的是一个tile内不会有重复的gaussians）。</p>
+<ol>
+<li><p>计算$k_i$的前缀和，用于确定需要分配的gaussian instance内存数等。计算完成后为<code>biningState</code> (gaussian instance) 分配内存。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> cudaError_t <span class="title">InclusiveSum</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为所有gaussian instances计算key和value。其中key为 | tile ID| depth |，depth占32位，方便后续按照tile ID第一顺位，depth第二顺位进行排序；value为gaussian的index。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">duplicateWithKeys</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>根据key为gaussian instances排序，并对每个tile划分gaussian instance的区间。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> cudaError_t <span class="title">SortPairs</span><span class="params">(...)</span></span>;</span><br><span class="line"><span class="function">__global__ <span class="type">void</span> <span class="title">identifyTileRanges</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="渲染"><a href="#渲染" class="headerlink" title="渲染"></a>渲染</h4><p>渲染操作中每个线程处理一个像素，该线程遍历该像素所在tile的所有gaussian instances，进行$\alpha$-blending。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="type">uint32_t</span> CHANNELS&gt;</span><br><span class="line">__global__ <span class="type">void</span> __launch_bounds__(BLOCK_X * BLOCK_Y)</span><br><span class="line"><span class="built_in">renderCUDA</span>(</span><br><span class="line">	<span class="type">const</span> uint2* __restrict__ ranges,</span><br><span class="line">	<span class="type">const</span> <span class="type">uint32_t</span>* __restrict__ point_list,</span><br><span class="line">	<span class="type">int</span> W, <span class="type">int</span> H,</span><br><span class="line">	<span class="type">const</span> float2* __restrict__ points_xy_image,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* __restrict__ features,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* __restrict__ depths,</span><br><span class="line">	<span class="type">const</span> float4* __restrict__ conic_opacity,</span><br><span class="line">	<span class="type">float</span>* __restrict__ out_alpha,</span><br><span class="line">	<span class="type">uint32_t</span>* __restrict__ n_contrib,</span><br><span class="line">	<span class="type">const</span> <span class="type">float</span>* __restrict__ bg_color,</span><br><span class="line">	<span class="type">float</span>* __restrict__ out_color,</span><br><span class="line">	<span class="type">float</span>* __restrict__ out_depth)</span><br></pre></td></tr></table></figure>
+
+<p>以渲染（512, 512）图像为例，有（512&#x2F;16, 512&#x2F;16）个blocks，每个block（16, 16）个threads。</p>
+<ol>
+<li>以block为单位，将16*16个gaussian instances的相关变量分别加载带<code>collected_X</code>共享内存中；</li>
+<li>block内thread同步后，每个thread分别遍历<code>collected_X</code>中的属性，对其负责的那个pixel进行$\alpha$-blending。</li>
+</ol>
+<h1 id="Backward"><a href="#Backward" class="headerlink" title="Backward"></a>Backward</h1>
+  </article>
+  <!-- tag -->
+  <div class="mt-12 pt-6 border-t border-gray-200">
+    
+  </div>
+  <!-- prev and next -->
+  <div class="flex justify-between mt-12 pt-6 border-t border-gray-200">
+    <div>
+      
+        <a href="/2024/11/22/hello-world/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          <iconify-icon width="20" icon="ri:arrow-left-s-line" data-inline="false"></iconify-icon>
+          Hello World
+        </a>
+      
+    </div>
+    <div>
+      
+        <a href="/2024/09/24/%E5%B8%B8%E8%A7%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9D%90%E6%A0%87%E7%B3%BB%E4%B9%A0%E4%BF%97%E6%80%BB%E7%BB%93/" class="text-sm text-gray-400 hover:text-gray-500 flex justify-center">
+          常见系统的坐标系习俗总结
+          <iconify-icon width="20" icon="ri:arrow-right-s-line" data-inline="false"></iconify-icon>
+        </a>
+      
+    </div>
+  </div>
+  <!-- comment -->
+  <div class="article-comments mt-12">
+    
+
+  </div>
+</section>
+<!-- js inspect -->
+
+<script src="/lib/clipboard.min.js"></script>
+
+
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+  });
+</script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const maraidConfig = {
+      theme: "default",
+      logLevel: 3,
+      flowchart: { curve: "linear" },
+      gantt: { axisFormat: "%m/%d/%Y" },
+      sequence: { actorMargin: 50 },
+    };
+    mermaid.initialize(maraidConfig);
+  });
+</script>
+
+
+
+<script src="/lib/fancybox/fancybox.umd.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+    $('.post-content').each(function(i){
+      $(this).find('img').each(function(){
+        if ($(this).parent().hasClass('fancybox') || $(this).parent().is('a')) return;
+        var alt = this.alt;
+        if (alt) $(this).after('<span class="fancybox-alt">' + alt + '</span>');
+        $(this).wrap('<a class="fancybox-img" href="' + this.src + '" data-fancybox=\"gallery\" data-caption="' + alt + '"></a>')
+      });
+      $(this).find('.fancybox').each(function(){
+        $(this).attr('rel', 'article' + i);
+      });
+    });
+
+    Fancybox.bind('[data-fancybox="gallery"]', {
+        // options
+    })
+  })
+</script>
+
+<!-- tocbot begin -->
+
+<script src="/lib/tocbot/tocbot.min.js"></script>
+
+<script>
+  $(document).ready(() => {
+      tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.post-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.post-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+        // For headings inside relative or absolute positioned containers within content.
+        hasInnerContainers: true,
+    });
+  })
+</script>
+<!-- tocbot end -->
+
+
+  </main>
+  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
+  <!-- busuanzi -->
+  
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- Busuanzi Analytics -->
+<div class="flex items-center gap-2">
+  <span>Visitors</span>
+  <span id="busuanzi_value_site_uv"></span>
+  <span>Page Views</span>
+  <span id="busuanzi_value_site_pv"></span>
+</div>
+<!-- End Busuanzi Analytics -->
+
+
+  <!-- copyright -->
+  <div class="flex items-center gap-2">
+    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
+    <span>© 2022</span>
+    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
+    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
+  </div>
+  <!-- powered by -->
+  <div class="flex items-center gap-2">
+    <span>Powered by</span>
+    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
+    <span>&</span>
+    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
+  </div>
+
+</footer>
+
+  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
+    <span class="flex justify-center items-center text-sm">
+      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
+      <span id="scrollpercent"><span>0</span> %</span>
+    </span>
+  </div>
+  
+<script src="/js/main.js"></script>
+
+
+  <script>
+    $(document).ready(function () {
+      const mapleCount = "10";
+      const speed = "0.5";
+      const mapleEl = document.getElementById("maple");
+      const maples = Array.from({ length: mapleCount }).map(() => {
+        const maple = document.createElement("div");
+        const scale = Math.random() * 0.5 + 0.5;
+        const offset = Math.random() * 2 - 1;
+        const x = Math.random() * mapleEl.clientWidth;
+        const y = -Math.random() * mapleEl.clientHeight;
+        const duration = 10 / speed;
+        const delay = -duration;
+        maple.className = "maple";
+        maple.style.width = `${24 * scale}px`;
+        maple.style.height = `${24 * scale}px`;
+        maple.style.left = `${x}px`;
+        maple.style.top = `${y}px`;
+        maple.style.setProperty("--maple-fall-offset", offset);
+        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
+        maple.style.animation = `fall ${duration}s linear infinite`;
+        maple.style.animationDelay = `${delay}s`;
+        mapleEl.appendChild(maple)
+        return maple
+      })
+    });
+  </script>
+  
+
+
+  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
+</body>
+
+</html>

@@ -1,456 +1,153 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+    <title>Yiming Chen</title>
 
+    <meta name="author" content="Yiming Chen">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="3dvision.svg" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    
+  </head>
 
+  <body>
+    <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+      <tr style="padding:0px">
+        <td style="padding:0px">
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+            <tr style="padding:0px">
+              <td style="padding:2.5%;width:63%;vertical-align:middle">
+                <p class="name" style="text-align: center;">
+                  Yiming Chen
+                </p>
+                <p>
+                  I am currently a second-year Ph.D. student at the <a href="https://www.sii.edu.cn/">Shanghai Innovation Institute (SII)</a>, jointly affiliated by <a href="https://www.westlake.edu.cn/">Westlake University</a> and <a href="https://www.zju.edu.cn/english/">Zhejiang University</a>, under the supervision of Prof. <a href="https://lzrobots.github.io/">Li Zhang</a> and Prof. <a href="https://ethliup.github.io/">Peidong Liu</a>. Before that, I obtained my Bachelor’s degree from <a href="https://en.tongji.edu.cn/p/#/">Tongji University</a>.
+                </p>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <p>
+                  My research interests are in 3D vision and spatial reasoning.
+                </p>
+                <p style="text-align:center">
+                  <a href="mailto:2923784829@qq.com">Email</a> &nbsp;/&nbsp;
+                  <!-- <a href="data/JonBarron-CV.pdf">CV</a> &nbsp;/&nbsp;
+                  <a href="data/JonBarron-bio.txt">Bio</a> &nbsp;/&nbsp; -->
+                  <a href="https://scholar.google.com/citations?hl=en&user=pEUjpmsAAAAJ">Scholar</a> &nbsp;/&nbsp;
+                  <!-- <a href="https://twitter.com/jon_barron">Twitter</a> &nbsp;/&nbsp;  -->
+                  <a href="https://github.com/yiming-cc">Github</a>
+                </p>
+              </td>
+              <!-- <td style="padding:2.5%;width:37%;max-width:37%">
+                <a href="images/JonBarron.jpg"><img style="width:100%;max-width:100%;object-fit: cover; border-radius: 50%;" alt="profile photo" src="images/JonBarron.jpg" class="hoverZoomLink"></a>
+              </td> -->
+            </tr>
+          </tbody></table>
 
-  <meta name="author" content="YMC">
+          <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+              <tr>
+              <td style="padding:16px;width:100%;vertical-align:middle">
+                <h2>Research</h2>
 
+              </td>
+            </tr>
+          </tbody></table>
+          <table style="width:100%;border:0px;border-spacing:0px 10px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
 
-
-
-
-<title>Blog</title>
-
-
-
-<link rel="icon" href="/favicon.png">
-
-
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/nprogress/nprogress.css">
-
-
-
-<script src="/lib/jquery.min.js"></script>
-
-
-<script src="/lib/iconify-icon.min.js"></script>
-
-
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<script>
-  tailwind.config = {
-    darkMode: "class",
-  };
-</script>
-
-
-<script src="/lib/nprogress/nprogress.js"></script>
-
-<script>
-  $(document).ready(() => {
-    NProgress.configure({
-      showSpinner: false,
-    });
-    NProgress.start();
-    $("#nprogress .bar").css({
-      background: "#de7441",
-    });
-    $("#nprogress .peg").css({
-      "box-shadow": "0 0 2px #de7441, 0 0 4px #de7441",
-    });
-    $("#nprogress .spinner-icon").css({
-      "border-top-color": "#de7441",
-      "border-left-color": "#de7441",
-    });
-    setTimeout(function () {
-      NProgress.done();
-      $(".fade").removeClass("out");
-    }, 800);
-  });
-</script>
-
-<script>
-  (function () {
-    const prefersDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const setting = localStorage.getItem("hexo-color-scheme") || "auto";
-    if (setting === "dark" || (prefersDark && setting !== "light"))
-      document.documentElement.classList.toggle("dark", true);
-    let isDark = document.documentElement.classList.contains("dark");
-  })();
-
-  $(document).ready(function () {
-    // init icon
-    const prefersDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = document.documentElement.classList.contains("dark");
-    $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
-
-    function toggleGiscusTheme() {
-      const isDark = document.documentElement.classList.contains("dark");
-      const giscusFrame = document.querySelector("iframe.giscus-frame");
-      if (giscusFrame) {
-        giscusFrame.contentWindow.postMessage(
-          {
-            giscus: {
-              setConfig: {
-                theme: isDark ? "dark" : "light",
-              },
-            },
-          },
-          "https://giscus.app"
-        );
-      }
-    }
-
-
-    // toggle dark mode
-    function toggleDark() {
-      let isDark = document.documentElement.classList.contains("dark");
-      const setting = localStorage.getItem("hexo-color-scheme") || "auto";
-      isDark = !isDark;
-      document.documentElement.classList.toggle("dark", isDark);
-      $("#theme-icon").attr("icon", isDark ? "ri:moon-line" : "ri:sun-line");
-      if (prefersDark === isDark) {
-        localStorage.setItem("hexo-color-scheme", "auto");
-      } else {
-        localStorage.setItem("hexo-color-scheme", isDark ? "dark" : "light");
-      }
-      toggleGiscusTheme();
-    }
-    $("#toggle-dark").click(toggleDark);
-
-    // listen dark mode change
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", (e) => {
-        const setting = localStorage.getItem("hexo-color-scheme") || "auto";
-        if (setting === "auto") {
-          document.documentElement.classList.toggle("dark", e.matches);
-          $("#theme-icon").attr(
-            "icon",
-            e.matches ? "ri:moon-line" : "ri:sun-line"
-          );
-          toggleGiscusTheme();
-        }
-      });
-  });
-</script>
-
-
-
-
-<meta name="generator" content="Hexo 7.3.0"></head>
-<body class="font-sans bg-white dark:bg-zinc-900 text-gray-700 dark:text-gray-200 relative">
-  <header class="fixed w-full px-5 py-1 z-10 backdrop-blur-xl backdrop-saturate-150 border-b border-black/5">
-  <div class="max-auto">
-    <nav class="flex items-center text-base">
-      <a href="/" class="group">
-        <h2 class="font-medium tracking-tighterp text-l p-2">
-          <img class="w-5 mr-2 inline-block transition-transform group-hover:rotate-[30deg]" id="logo" src="/images/logo.svg" alt="Blog" />
-          Blog
-        </h2>
-      </a>
-      <div id="header-title" class="opacity-0 md:ml-2 md:mt-[0.1rem] text-xs font-medium whitespace-nowrap overflow-hidden overflow-ellipsis">
-        
-      </div>
-      <div class="flex-1"></div>
-      <div class="flex items-center gap-3">
-        
-          <a class="hidden sm:flex" href="/archives">Posts</a>
-        
-        
-          
-            <a class="w-5 h-5 hidden sm:flex" title="Github" target="_blank" rel="noopener" href="https://github.com/xbmlz">
-              <iconify-icon width="20" icon="ri:github-line"></iconify-icon>
-            </a>
-          
-        
-        <a class="w-5 h-5 hidden sm:flex" title="Github" href="rss2.xml">
-          <iconify-icon width="20" icon="ri:rss-line"></iconify-icon>
+    <tr>
+      <td style="padding:16px;width:20%;vertical-align:middle">
+        <div class="one">
+          <img src='images/gs-reasoner.png' width="180">
+        </div>
+  
+      </td>
+      <td style="padding:8px;width:80%;vertical-align:middle">
+        <a href="https://yiming-cc.github.io/gs-reasoner">
+          <span class="papertitle">Reasoning in Space via Grounding in the World</span>
         </a>
-        <a class="w-5 h-5" title="toggle theme" id="toggle-dark">
-          <iconify-icon width="20" icon="" id="theme-icon"></iconify-icon>
+        <br>
+        <strong>Yiming Chen</strong>,
+        <a href="https://qizekun.github.io/">Zekun Qi</a>,
+        <a href="https://zhangwenyao1.github.io/">Wenyao Zhang</a>,
+        <a href="https://jinx-ustc.github.io/jinxin.github.io/">Xin Jin</a>,
+        <a href="https://lzrobots.github.io/">Li Zhang</a>,
+        <a href="https://ethliup.github.io/">Peidong Liu</a>
+        <br>
+        arxiv preprint
+        <br>
+        <a href="https://yiming-cc.github.io/gs-reasoner">webpage</a>
+        /
+        <a href="">arXiv</a>
+        /
+        <a href="">code</a>
+        <p></p>
+        <p>
+          The first 3D-LLM that bridge 3D visual grounding and spatial reasoning.
+        </p>
+      </td>
+    </tr>
+
+
+    <tr onmouseout="dreammesh4d_stop()" onmouseover="dreammesh4d_start()">
+      <td style="padding:16px;width:20%;vertical-align:middle">
+        <div class="one">
+          <div class="two" id='dreammesh4d_image'><video  width=100% height=100% muted autoplay loop>
+          <source src="images/dreammesh4d.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+
+          </video></div>
+          <img src='images/dreammesh4d.jpg' width="180">
+        </div>
+        <script type="text/javascript">
+          function dreammesh4d_start() {
+            document.getElementById('dreammesh4d_image').style.opacity = "1";
+          }
+
+          function dreammesh4d_stop() {
+            document.getElementById('dreammesh4d_image').style.opacity = "0";
+          }
+          dreammesh4d_stop()
+        </script>
+      </td>
+      <td style="padding:8px;width:80%;vertical-align:middle">
+        <a href="https://lizhiqi49.github.io/DreamMesh4D/">
+          <span class="papertitle">DreamMesh4D: Video-to-4D Generation with Sparse-Controlled Gaussian-Mesh Hybrid Representation</span>
         </a>
-      </div>
-      <div class="flex items-center justify-center gap-3 ml-3 sm:hidden">
-        <span class="w-5 h-5" aria-hidden="true" role="img" id="open-menu">
-          <iconify-icon width="20" icon="carbon:menu" ></iconify-icon>
-        </span>
-        <span class="w-5 h-5 hidden" aria-hidden="true" role="img" id="close-menu">
-          <iconify-icon  width="20" icon="carbon:close" ></iconify-icon>
-        </span>
-      </div>
-    </nav>
-  </div>
-</header>
-<div id="menu-panel" class="h-0 overflow-hidden sm:hidden fixed left-0 right-0 top-12 bottom-0 z-10">
-  <div id="menu-content" class="relative z-20 bg-white/80 px-6 sm:px-8 py-2 backdrop-blur-xl -translate-y-full transition-transform duration-300">
-    <ul class="nav flex flex-col sm:flex-row text-sm font-medium">
-      
-        <li class="nav-portfolio sm:mx-2 border-b sm:border-0 border-black/5 last:border-0 hover:text-main">
-          <a href="/archives" class="flex h-12 sm:h-auto items-center">Posts</a>
-        </li>
-      
-    </ul>
-  </div>
-  <div class="mask bg-black/20 absolute inset-0"></div>
-</div>
+        <br>
+        <a href="https://github.com/lizhiqi49/">Zhiqi Li</a><sup>*</sup>,
+        <strong>Yiming Chen</strong><sup>*</sup>,
+        <a href="https://ethliup.github.io/">Peidong Liu</a>
 
-  <main class="pt-14">
-    <section class="px-6 max-w-prose mx-auto gap-12 grid grid-cols-1">
-  <div class="flex flex-col h-48 items-center justify-center">
-    <h1 class="site-title text-4xl leading-relaxed">
-      Blog
-    </h1>
-    <p class="text-gray-500 mt-2">
-      
-    </p>
-  </div>
-  
-  
-    
-    
-      <div class="relative pointer-events-none">
-        <span class="text-9xl opacity-10 absolute -left-11 -top-6 font-bold">2024</span>
-      </div>
-    
-    <a style="--stagger:0" href="/2024/12/06/%E5%85%BB%E7%8C%AB%E6%9C%89%E6%84%9F/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          养猫有感
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
+        <br>
+        <em>NeurIPS</em>, 2024
+        <br>
+        <a href="https://lizhiqi49.github.io/DreamMesh4D/">webpage</a>
+        /
+        <a href="https://arxiv.org/abs/2410.06756">arXiv</a>
+        /
+        <a href="https://github.com/WU-CVGL/DreamMesh4D">code</a>
+        <p></p>
+        <p>
+          A hybrid gaussian-mesh representation for high quality video-to-4D generation.
         </p>
-        <p class="line-clamp-4">
-          Dec 06
-          ·
-          1 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:1" href="/2024/11/22/physically-based-shading/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          physically based shading
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Nov 22
-          ·
-          1 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:2" href="/2024/11/22/hello-world/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          Hello World
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Nov 22
-          ·
-          1 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:3" href="/2024/09/24/gaussian-cuda%E6%B8%B2%E6%9F%93%E4%BB%A3%E7%A0%81%E8%AF%A6%E8%A7%A3/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          gaussian cuda渲染代码详解
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Sep 24
-          ·
-          8 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:4" href="/2024/09/24/%E5%B8%B8%E8%A7%81%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%9D%90%E6%A0%87%E7%B3%BB%E4%B9%A0%E4%BF%97%E6%80%BB%E7%BB%93/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          常见系统的坐标系习俗总结
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Sep 24
-          ·
-          3 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:5" href="/2024/08/16/nerf%E4%B8%8E3dgs%E6%B8%B2%E6%9F%93%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          nerf与3dgs渲染技术详解
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Aug 16
-          ·
-          4 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:6" href="/2024/08/11/mesh%E7%94%9F%E6%88%90%E8%AE%BA%E6%96%87%E6%80%BB%E7%BB%93/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          mesh生成论文总结
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Aug 11
-          ·
-          1 min
-        </p>
-      </section>
-    </a>
-  
-    
-    
-    <a style="--stagger:7" href="/2024/08/11/git-tutorial/" data-animate>
-      <header>
-        <h2 class="font-bold text-xl">
-          git tutorial
-        </h2>
-      </header>
-      <section class="text-gray-400 my-2 text-sm time">
-        <p class="line-clamp-4">
-          
-        </p>
-        <p class="line-clamp-4">
-          Aug 11
-          ·
-          25 min
-        </p>
-      </section>
-    </a>
-  
-</section>
+      </td>
+    </tr>
 
+    <table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
+      <tr>
+        <td style="padding:0px">
+          <br>
+          <p style="text-align:center;font-size:small;">
+            <a href="https://github.com/jonbarron/jonbarron_website">website template</a>
+          </p>
+        </td>
+      </tr>
+    </tbody></table>
 
-  </main>
-  <footer class="flex flex-col h-40 items-center justify-center text-gray-400 text-sm">
-  <!-- busuanzi -->
-  
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<!-- Busuanzi Analytics -->
-<div class="flex items-center gap-2">
-  <span>Visitors</span>
-  <span id="busuanzi_value_site_uv"></span>
-  <span>Page Views</span>
-  <span id="busuanzi_value_site_pv"></span>
-</div>
-<!-- End Busuanzi Analytics -->
-
-
-  <!-- copyright -->
-  <div class="flex items-center gap-2">
-    <a target="_blank" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color: inherit;">CC BY-NC-SA 4.0</a>
-    <span>© 2022</span>
-    <iconify-icon width="18" icon="emojione-monotone:maple-leaf" ></iconify-icon>
-    <a href="https://github.com/xbmlz" target="_blank" rel="noopener noreferrer">xbmlz</a>
-  </div>
-  <!-- powered by -->
-  <div class="flex items-center gap-2">
-    <span>Powered by</span>
-    <a href="https://hexo.io/" target="_blank" rel="noopener noreferrer">Hexo</a>
-    <span>&</span>
-    <a href="https://github.com/xbmlz/hexo-theme-maple" target="_blank" rel="noopener noreferrer">Maple</a>
-  </div>
-
-</footer>
-
-  <div class="back-to-top box-border fixed right-6 z-1024 -bottom-20 rounded py-1 px-1 bg-slate-900 opacity-60 text-white cursor-pointer text-center dark:bg-slate-600">
-    <span class="flex justify-center items-center text-sm">
-      <iconify-icon width="18" icon="ion:arrow-up-c" id="go-top"></iconify-icon>
-      <span id="scrollpercent"><span>0</span> %</span>
-    </span>
-  </div>
-  
-<script src="/js/main.js"></script>
-
-
-  <script>
-    $(document).ready(function () {
-      const mapleCount = "10";
-      const speed = "0.5";
-      const mapleEl = document.getElementById("maple");
-      const maples = Array.from({ length: mapleCount }).map(() => {
-        const maple = document.createElement("div");
-        const scale = Math.random() * 0.5 + 0.5;
-        const offset = Math.random() * 2 - 1;
-        const x = Math.random() * mapleEl.clientWidth;
-        const y = -Math.random() * mapleEl.clientHeight;
-        const duration = 10 / speed;
-        const delay = -duration;
-        maple.className = "maple";
-        maple.style.width = `${24 * scale}px`;
-        maple.style.height = `${24 * scale}px`;
-        maple.style.left = `${x}px`;
-        maple.style.top = `${y}px`;
-        maple.style.setProperty("--maple-fall-offset", offset);
-        maple.style.setProperty("--maple-fall-height", `${Math.abs(y) + mapleEl.clientHeight}px`);
-        maple.style.animation = `fall ${duration}s linear infinite`;
-        maple.style.animationDelay = `${delay}s`;
-        mapleEl.appendChild(maple)
-        return maple
-      })
-    });
-  </script>
-  
-
-
-  <div class="fixed top-0 bottom-0 left-0 right-0 pointer-events-none print:hidden" id="maple"></div>
-</body>
-
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>
+
+

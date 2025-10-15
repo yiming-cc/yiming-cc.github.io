@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Reasoning in Space via Grounding in the World">
+  <meta name="keywords" content="Spatial Reasoning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reasoning in Space via Grounding in the World</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="/3dvision.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Reasoning in Space via Grounding in the World</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://yiming-cc.github.io/">Yiming Chen</a><sup>123</sup>,</span>
+            <span class="author-block">
+              <a href="https://qizekun.github.io/">Zekun Qi</a><sup>4</sup>,</span>
+            <span class="author-block">
+              <a href="https://zhangwenyao1.github.io/">Wenyao Zhang</a><sup>56</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://jinx-ustc.github.io/jinxin.github.io/">Xin Jin</a><sup>6</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://lzrobots.github.io/">Li Zhang</a><sup>27*</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://ethliup.github.io/">Peidong Liu</a><sup>13*</sup>,
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>WestLake University</span>
+            <span class="author-block"><sup>2</sup>Shanghai Innovation Institute</span>
+            <span class="author-block"><sup>3</sup>Zhejiang University</span>
+            <span class="author-block"><sup>4</sup>Tsinghua University</span>
+            <span class="author-block"><sup>5</sup>Shanghai Jiao Tong University</span>
+            <span class="author-block"><sup>6</sup>Eastern Institute of Technology</span>
+            <span class="author-block"><sup>7</sup>Fudan University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Video Link. -->
+              <!-- <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Huggingface</span>
+                  </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src=""
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        video here
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+            In this paper, we claim that 3D visual grounding is the cornerstone of spatial reasoning and introduce the <strong>Grounded-Spatial Reasoner (GS-Reasoner)</strong> to explore the effective spatial representations that bridge the gap between them.
+            Existing 3D LLMs suffer from the absence of a unified 3D representation capable of jointly capturing semantic and geometric information.
+            This deficiency is manifested either in poor performance on grounding or in an excessive reliance on external modules, ultimately hindering the seamless integration of grounding and spatial reasoning.
+            To address this, we propose a simple yet effective <strong>dual-path pooling</strong> mechanism that tightly aligns geometric features with both semantic and positional cues, constructing a unified image patch-based 3D representation that encapsulates all essential information without increasing the number of input tokens. Leveraging this holistic representation, GS-Reasoner is the first 3D LLM that achieves autoregressive grounding entirely without external modules while delivering performance comparable to state-of-the-art models, establishing a unified and self-contained framework for 3D spatial reasoning.
+            To further bridge grounding and spatial reasoning, we introduce the <strong>Grounded Chain-of-Thought (GCoT)</strong> dataset. This dataset is meticulously curated to include both 3D bounding box annotations for objects referenced in reasoning questions and step-by-step reasoning paths that integrate grounding as a core component of the problem-solving process.
+            Extensive experiments demonstrate that GS-Reasoner achieves impressive results on 3D visual grounding, which in turn significantly enhances its spatial reasoning capabilities, leading to state-of-the-art performance.
+
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    
+    <!-- Method Overview -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Method Overview</h2>
+            <div class="has-text-centered">
+              <!-- <iframe src="./static/images/pipeline_final.pdf" width="100%" 
+            height="300px" style="border: none;"></iframe> -->
+              <img src="./static/images/pipeline.png" alt="Method Pipeline" style="max-width: 100%; height: auto;">
+              <div class="content has-text-justified">
+                <strong>Overview of GS-Reasoner framework.</strong> Our method builds a semantic-geometric hybrid 3D scene representation, enabling 3D LLM to perform 3D visual grounding autoregressively, which allows grounding to be integrated as a chain-of-thought within the spatial reasoning process. 
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Method Overview -->
+
+    <!-- Dataset Overview -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 5rem;">
+      <div class="column">
+        <div class="content">
+          <h2 class="title is-3">Dataset Overview</h2>
+            <div class="has-text-centered">
+              <!-- <iframe src="./static/images/pipeline_final.pdf" width="100%" 
+            height="300px" style="border: none;"></iframe> -->
+              <img src="./static/images/Dataset.png" alt="Dataset Pipeline" style="max-width: 100%; height: auto;">
+              <div class="content has-text-justified">
+                <strong>Overview of Grounded Chain-of-Thought (GCoT) Dataset.</strong> We first construct spatial QA pairs without CoT, and then prompt GPT-4o to generate CoT paths based on the bird's-eye view, object information, and QA pairs.
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Dataset Overview -->
+
+
+    <!-- Performance. -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 5rem;">
+      <div class="column">
+        <h2 class="title is-3">Performance</h2>
+
+        <h3 class="title is-5">Spatial Reasoning (VSI-Bench)</h3>
+        <img src="./static/images/sp_tab.png" alt="Spatial Reasoning Table" style="max-width: 100%; height: auto;">
+        <div class="content has-text-justified">
+          <strong>Evaluation on VSI-Bench.</strong> GS-Reasoner achieves state-of-the-art performance on most tasks, with further gains using more accurate (ground-truth) depth.
+        </div>
+
+        <h3 class="title is-5" style="margin-top:3rem;">3D Visual Grounding</h3>
+        <img src="./static/images/3dvg_tab.png" alt="3D Visual Grounding Table" style="max-width: 100%; height: auto;">
+        <div class="content has-text-justified">
+          <strong>Evaluation on 3D Visual Grounding.</strong> GS-Reasoner achieves performance comparable to 3D LLMs using mesh proposals or external grounding, without any external components.
+        </div>
+
+        <h3 class="title is-5" style="margin-top:3rem;">General 3D Tasks</h3>
+        <img src="./static/images/g3d_tab.png" alt="General 3D Tasks Table" style="max-width: 100%; height: auto;">
+        <div class="content has-text-justified">
+          <strong>Evaluation on General 3D Tasks.</strong> GS-Reasoner outperforms state-of-the-art 3D LLMs on Scan2Cap and achieves comparable results on ScanQA and SQA3D.
+        </div>
+
+      </div>
+    </div>
+    <!--/ Performance. -->
+
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code></code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/videos/nerfies_paper.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            We thank the authors of <a href="https://nerfies.github.io/">Nerfies</a> that kindly open sourced the template of this website.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

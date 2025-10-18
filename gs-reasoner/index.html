@@ -49,22 +49,23 @@
       <div class="columns is-centered">
         <div class="column has-text-centered">
           <h1 class="title is-1 publication-title">Reasoning in Space via Grounding in the World</h1>
+          <a target="_blank" style="color: #0F52BA; font-size: 30px; text-decoration: none; font-weight: bold;"><b>Sota on VSI-Bench</b> 🚀</a>
           <div class="is-size-5 publication-authors">
             <span class="author-block">
-              <a href="https://yiming-cc.github.io/">Yiming Chen</a><sup>123</sup>,</span>
+              <a href="https://yiming-cc.github.io/">Yiming Chen</a><sup>1,2,3</sup>,</span>
             <span class="author-block">
               <a href="https://qizekun.github.io/">Zekun Qi</a><sup>4</sup>,</span>
             <span class="author-block">
-              <a href="https://zhangwenyao1.github.io/">Wenyao Zhang</a><sup>56</sup>,
+              <a href="https://zhangwenyao1.github.io/">Wenyao Zhang</a><sup>5,6</sup>,
             </span>
             <span class="author-block">
               <a href="https://jinx-ustc.github.io/jinxin.github.io/">Xin Jin</a><sup>6</sup>,
             </span>
             <span class="author-block">
-              <a href="https://lzrobots.github.io/">Li Zhang</a><sup>27*</sup>,
+              <a href="https://lzrobots.github.io/">Li Zhang</a><sup>2,7*</sup>,
             </span>
             <span class="author-block">
-              <a href="https://ethliup.github.io/">Peidong Liu</a><sup>13*</sup>,
+              <a href="https://ethliup.github.io/">Peidong Liu</a><sup>1*</sup>,
             </span>
           </div>
 
@@ -81,7 +82,7 @@
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href=""
+                <a href="https://arxiv.org/pdf/2510.13800"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                       <i class="ai ai-arxiv"></i>
@@ -130,19 +131,58 @@
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <!-- <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src=""
-                type="video/mp4">
-      </video> -->
+      <div class="video-container">
+        <video id="teaser" muted loop playsinline height="100%">
+          <source src="./static/videos/demo_real_world.mp4"
+                  type="video/mp4">
+        </video>
+        <div class="play-button-overlay" id="playButtonOverlay">
+          <button class="play-button" id="playButton">
+            <i class="fas fa-play"></i>
+          </button>
+        </div>
+        
+        <!-- 视频控制器 -->
+        <div class="video-controls" id="videoControls">
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar">
+              <div class="progress-filled" id="progressFilled"></div>
+              <div class="progress-handle" id="progressHandle"></div>
+            </div>
+          </div>
+          
+          <div class="controls-row">
+            <div class="left-controls">
+              <button class="control-btn" id="playPauseBtn">
+                <i class="fas fa-play"></i>
+              </button>
+              <button class="control-btn" id="muteBtn">
+                <i class="fas fa-volume-up"></i>
+              </button>
+              <div class="volume-container">
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+              </div>
+              <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
+            </div>
+            
+            <div class="right-controls">
+              <button class="control-btn" id="fullscreenBtn">
+                <i class="fas fa-expand"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- <h2 class="subtitle has-text-centered">
         video here
       </h2> -->
 
-      <img src="./static/images/teaser.png" alt="Teaser" style="max-width: 100%; height: auto;">
-      <div class="content has-text-justified">
-        We propose <strong>GS-Reasoner</strong>, which integrates visual grounding as an intermediate chain-of-thought for spatial reasoning. All the bounding boxes shown above are autoregressively derived by GS-Reasoner in the reasoning process. Notably, the showcased video is captured in the wild without sensory 3D inputs, highlighting the strong generalization capability of our model.
+      <!-- <img src="./static/images/teaser.png" alt="Teaser" style="max-width: 100%; height: auto;"> -->
+       <div class="columns is-centered has-text-centered" style="margin-top: 5px;">
+        <div class="content has-text-justified">
+          The video is captured in the wild without sensory 3D inputs, highlighting the strong generalization capability of our model.
+        </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -247,7 +287,17 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code></code></pre>
+    <pre><code>
+      @misc{chen2025reasoningspacegroundingworld,
+        title={Reasoning in Space via Grounding in the World}, 
+        author={Yiming Chen and Zekun Qi and Wenyao Zhang and Xin Jin and Li Zhang and Peidong Liu},
+        year={2025},
+        eprint={2510.13800},
+        archivePrefix={arXiv},
+        primaryClass={cs.CV},
+        url={https://arxiv.org/abs/2510.13800}, 
+  }
+    </code></pre>
   </div>
 </section>
 
@@ -270,6 +320,230 @@
     </div>
   </div>
 </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const video = document.getElementById('teaser');
+  const playButton = document.getElementById('playButton');
+  const playButtonOverlay = document.getElementById('playButtonOverlay');
+  const videoControls = document.getElementById('videoControls');
+  
+  // 控制器元素
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const muteBtn = document.getElementById('muteBtn');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const progressBar = document.getElementById('progressBar');
+  const progressFilled = document.getElementById('progressFilled');
+  const progressHandle = document.getElementById('progressHandle');
+  const timeDisplay = document.getElementById('timeDisplay');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  let isDragging = false;
+  let controlsTimeout;
+  
+  // 格式化时间显示
+  function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+  
+  // 更新进度条
+  function updateProgress() {
+    if (video.duration) {
+      const progress = (video.currentTime / video.duration) * 100;
+      progressFilled.style.width = progress + '%';
+      progressHandle.style.left = progress + '%';
+    }
+  }
+  
+  // 更新时间显示
+  function updateTime() {
+    timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+  }
+  
+  // 显示控制器
+  function showControls() {
+    videoControls.classList.add('show');
+    clearTimeout(controlsTimeout);
+    controlsTimeout = setTimeout(() => {
+      if (!video.paused) {
+        videoControls.classList.remove('show');
+      }
+    }, 3000);
+  }
+  
+  // 隐藏控制器
+  function hideControls() {
+    videoControls.classList.remove('show');
+  }
+  
+  // 播放/暂停功能
+  function togglePlayPause() {
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+  }
+  
+  // 静音/取消静音
+  function toggleMute() {
+    video.muted = !video.muted;
+    volumeSlider.value = video.muted ? 0 : video.volume;
+  }
+  
+  // 全屏功能
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      video.requestFullscreen().catch(err => {
+        console.log('Error attempting to enable fullscreen:', err);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  }
+  
+  // 设置视频时间
+  function setVideoTime(percent) {
+    video.currentTime = (percent / 100) * video.duration;
+  }
+  
+  // 事件监听器
+  
+  // 点击播放按钮开始播放视频
+  playButton.addEventListener('click', function() {
+    video.play();
+    playButtonOverlay.classList.add('hidden');
+    showControls();
+  });
+  
+  // 播放/暂停按钮
+  playPauseBtn.addEventListener('click', togglePlayPause);
+  
+  // 静音按钮
+  muteBtn.addEventListener('click', toggleMute);
+  
+  // 音量滑块
+  volumeSlider.addEventListener('input', function() {
+    video.volume = this.value;
+    video.muted = this.value == 0;
+  });
+  
+  // 全屏按钮
+  fullscreenBtn.addEventListener('click', toggleFullscreen);
+  
+  // 进度条点击
+  progressBar.addEventListener('click', function(e) {
+    const rect = this.getBoundingClientRect();
+    const percent = ((e.clientX - rect.left) / rect.width) * 100;
+    setVideoTime(percent);
+  });
+  
+  // 进度条拖拽
+  progressHandle.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', function(e) {
+    if (isDragging) {
+      const rect = progressBar.getBoundingClientRect();
+      const percent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+      setVideoTime(percent);
+    }
+  });
+  
+  document.addEventListener('mouseup', function() {
+    isDragging = false;
+  });
+  
+  // 视频事件监听
+  video.addEventListener('play', function() {
+    playButtonOverlay.classList.add('hidden');
+    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+    showControls();
+  });
+  
+  video.addEventListener('pause', function() {
+    playButtonOverlay.classList.remove('hidden');
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    showControls();
+  });
+  
+  video.addEventListener('ended', function() {
+    playButtonOverlay.classList.remove('hidden');
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    video.currentTime = 0;
+    updateProgress();
+  });
+  
+  video.addEventListener('timeupdate', function() {
+    if (!isDragging) {
+      updateProgress();
+    }
+    updateTime();
+  });
+  
+  video.addEventListener('loadedmetadata', function() {
+    updateTime();
+  });
+  
+  video.addEventListener('volumechange', function() {
+    muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    volumeSlider.value = video.muted ? 0 : video.volume;
+  });
+  
+  // 鼠标移动显示控制器
+  video.addEventListener('mousemove', showControls);
+  video.addEventListener('mouseleave', function() {
+    if (!video.paused) {
+      hideControls();
+    }
+  });
+  
+  // 点击视频播放/暂停
+  video.addEventListener('click', function(e) {
+    if (e.target === video) {
+      togglePlayPause();
+    }
+  });
+  
+  // 键盘控制
+  document.addEventListener('keydown', function(e) {
+    if (video === document.activeElement || video.contains(document.activeElement)) {
+      switch(e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlayPause();
+          break;
+        case 'KeyM':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'KeyF':
+          e.preventDefault();
+          toggleFullscreen();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          video.currentTime = Math.max(0, video.currentTime - 10);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          video.currentTime = Math.min(video.duration, video.currentTime + 10);
+          break;
+      }
+    }
+  });
+  
+  // 全屏状态变化
+  document.addEventListener('fullscreenchange', function() {
+    fullscreenBtn.innerHTML = document.fullscreenElement ? 
+      '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
+  });
+});
+</script>
 
 </body>
 </html>

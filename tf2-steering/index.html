@@ -4,29 +4,53 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f8f9fa">
-  <title>TF²-Steering — Tactile Forecasts &amp; Feedback</title>
-  <meta name="description" content="TF²-Steering: Action Refinement with Tactile Forecasts and Feedback via Velocity-Field Steering.">
+  <meta name="description" content="TF²-Steering: Action Refinement with Tactile Forecasts and Feedback via Velocity-Field Steering. A research project on tactile-guided dexterous manipulation.">
+  <title>TF²-Steering — Tactile Forecasts & Feedback</title>
   <link rel="canonical" href="https://yiming-cc.github.io/tf2-steering/">
   <meta property="og:type" content="website">
   <meta property="og:title" content="TF²-Steering">
   <meta property="og:description" content="Action Refinement with Tactile Forecasts and Feedback via Velocity-Field Steering.">
   <meta property="og:url" content="https://yiming-cc.github.io/tf2-steering/">
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css?v=20261101-full">
+  <link rel="stylesheet" href="method.css?v=20261101-full">
+  <link rel="stylesheet" href="results.css?v=20261101-full">
 </head>
 <body>
+  <a class="skip-link" href="#abstract">Skip to research</a>
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="TF squared Steering home">TF<sup>2</sup><span>—</span>Steering<span class="wordmark-dot"></span></a>
+    <nav aria-label="Main navigation"><a href="#tasks">Tasks</a><a href="#method">Method</a><a href="#results">Results</a></nav>
+    <a class="nav-cta" href="#abstract">Read the research <span aria-hidden="true">↗</span></a>
+  </header>
   <main>
-    <section class="hero" aria-labelledby="paper-title">
-      <canvas id="hero-canvas" role="img" aria-label="Illustrative animation of tactile delta velocity gradually steering a base flow-matching trajectory toward a refined action"></canvas>
+    <section class="hero" id="top" aria-labelledby="paper-title">
+      <canvas id="hero-canvas" aria-label="Illustrative animation of tactile delta velocity gradually steering a base flow-matching trajectory toward a refined action" role="img"></canvas>
       <div class="hero-copy">
+        <p class="eyebrow"><span class="tiny-line"></span> TACTILE-GUIDED DEXTEROUS MANIPULATION</p>
         <h1 id="paper-title"><span class="title-brand">TF<sup>2</sup>-Steering</span><span class="title-description">Action Refinement with Tactile Forecasts<br class="desktop-break"> and Feedback via Velocity-Field Steering</span></h1>
         <p class="authors">Yiming Chen<sup>1,2,3</sup><span>·</span> Xiaofei Wei<sup>2,4</sup><span>·</span> Chun Gu<sup>2,4</sup><br>Wei Xiao<sup>2,4</sup><span>·</span> Peidong Liu<sup>3</sup><span>·</span> Li Zhang<sup>2,4,†</sup></p>
         <p class="affiliations"><span><sup>1</sup> Zhejiang University</span><span><sup>2</sup> Shanghai Innovation Institute</span><span><sup>3</sup> Westlake University</span><span><sup>4</sup> Fudan University</span></p>
         <p class="corresponding">† Corresponding author</p>
+        <div class="resource-links" role="group" aria-label="Paper resources">
+          <a class="resource-button resource-pdf" href="assets/tf2-steering.pdf" target="_blank" rel="noopener noreferrer" aria-label="Read the paper PDF (opens in a new tab)" title="Read the paper (PDF)"><svg width="20" height="20" fill="none" stroke="currentColor" class="resource-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M11.5 2.5h-6a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-10z"/><path d="M11.5 2.5v4h4M7.5 10h5M7.5 13h5"/></svg><span>PDF</span><span class="resource-external" aria-hidden="true">↗</span></a>
+          <button class="resource-button resource-arxiv" type="button" disabled aria-label="arXiv — coming soon" title="arXiv · Coming soon"><svg width="20" height="20" fill="none" stroke="currentColor" class="resource-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5 15 16.5M15 3.5 5 16.5"/><path d="m6.5 3.5 5 6.5-5 6.5" opacity=".45"/></svg><span>arXiv</span><svg width="12" height="12" fill="none" stroke="currentColor" class="resource-lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="7" width="8" height="6" rx="1.8"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg></button>
+          <button class="resource-button resource-code" type="button" disabled aria-label="Code — coming soon" title="Code · Coming soon"><svg width="20" height="20" fill="none" stroke="currentColor" class="resource-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m6.5 5-4 5 4 5M13.5 5l4 5-4 5M11.5 3.5l-3 13"/></svg><span>Code</span><svg width="12" height="12" fill="none" stroke="currentColor" class="resource-lock" viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="7" width="8" height="6" rx="1.8"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg></button>
+        </div>
+        <div class="hero-actions"><a class="button primary" href="#method">Explore the method <span aria-hidden="true">↗</span></a><a class="button secondary" href="#tasks"><span class="play-small" aria-hidden="true">▷</span> See it in action</a></div>
       </div>
-      <div class="hero-bottom"><button id="hero-pause" type="button" class="motion-button" aria-label="Pause animation" aria-pressed="false">Ⅱ <span>Pause motion</span></button></div>
+      <div class="hero-bottom"><span class="hero-note">A small change in velocity.<br><strong>A different action.</strong></span><a href="#tasks" class="scroll-cue">SCROLL TO EXPLORE <span aria-hidden="true">↓</span></a><button id="hero-pause" class="motion-button" aria-label="Pause hero animation">Ⅱ <span>Pause motion</span></button></div>
     </section>
+    <section class="section task-section" id="tasks" aria-labelledby="tasks-title">
+      <div class="section-top split-heading reveal"><div><p class="eyebrow">01 / REAL-WORLD TASKS</p><h2 id="tasks-title">Six tasks.<br>A finer sense of control.</h2></div><p class="section-intro">Contact-rich manipulation with two dexterous hands.<br><span class="subtle">Rollouts shown at 1.5× speed, without audio.</span></p></div>
+      <div class="task-grid" id="task-grid"></div>
+    </section>
+    <section class="abstract-section" id="abstract" aria-labelledby="abstract-title"><div class="section abstract-inner"><div class="abstract-heading reveal"><p class="eyebrow">02 / ABSTRACT</p><h2 id="abstract-title">Making <br>touch count.</h2><div class="abstract-symbol" aria-hidden="true">v <span>+</span> Δv</div></div><div class="abstract-copy reveal" id="abstract-copy"><p>Tactile sensing plays a crucial role in everyday human interaction. Consider inserting a plug into a tight socket, vision alone provides limited guidance during the final insertion stage, and we instead rely on both anticipated contact and realized tactile feedback to ajust the insertion motion. The same capability is equally important for robots, particularly in dexterous manipulation tasks.</p><p>Yet many contemporary robot policies remain vision-dominant. This visual bias, compounded by limited tactile data and sparse contact events, can cause directly incorporated tactile signals to be ignored or even compromise the policy&#x27;s pretrained capabilities, yielding degrading performance as observed in our experiments.</p><p>We present TF²-Steering, which refines actions via learned residual steering of the flow-matching action expert&#x27;s velocity field, using a tactile mixture-of-experts architecture to integrate both tactile forecasts and real-time tactile feedback. Together with specific designed three stages training recipe, TF²-Steering enables tactile signals to correct and, when necessary, redirect the flow-matching action-generation process, while building on the strong action-generation capacity of the vision-based foundation policy.</p><p>Extensive experiments across six simulated and six real-world manipulation tasks demonstrate the effectiveness of TF²-Steering. It outperforms the strongest evaluated baselines by 10.7 percentage points in average simulation success rate and 9.1 percentage points in average real-world progress success rate.</p></div></div></section>
+    <section class="section method-section" id="method" aria-labelledby="method-title"><div class="section-top reveal"><p class="eyebrow">03 / THE METHOD</p><h2 id="method-title">Predict once. Refine as you act.</h2><p class="section-intro">Fixed world priors guide an action chunk. Fresh tactile feedback guides its refinement.<br>The tactile expert fuses forecast and feedback features to steer the base velocity.</p></div><div id="method-demo" class="reveal"></div></section>
+    <section class="results-section" id="results" aria-labelledby="results-title"><div class="section"><div class="section-top reveal"><p class="eyebrow">04 / THE RESULTS</p><h2 id="results-title">Measured in action.</h2><p class="section-intro">Six simulation tasks. Six real-world tasks.<br>Explore the comparisons reported in Tables 1 and 2.</p></div><div id="results-charts" class="reveal"></div></div></section>
   </main>
-  <script type="module" src="./app.js"></script>
+  <footer class="site-footer"><a class="wordmark" href="#top">TF<sup>2</sup><span>—</span>Steering</a><p>Action Refinement with Tactile Forecasts and Feedback<br>via Velocity-Field Steering</p><a href="#top" class="back-top">Back to top ↑</a></footer>
+  <dialog id="video-dialog"><div class="dialog-head"><h3 id="dialog-title">Task rollout</h3><button id="close-dialog" aria-label="Close video">✕</button></div><video id="dialog-video" controls playsinline></video><p id="dialog-caption"></p></dialog>
+  <script type="module" src="app.js?v=20261101-full"></script>
 </body>
 </html>

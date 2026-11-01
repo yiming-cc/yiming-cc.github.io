@@ -3,7 +3,7 @@ export function initHero(canvas) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return { setPaused() {}, destroy() {} };
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let width = 0, height = 0, paused = reduce.matches, visible = true, frame = 0, elapsed = reduce.matches ? 7.7 : 0, last = 0;
+  let width = 0, height = 0, paused = false, visible = true, frame = 0, elapsed = 0, last = 0;
   const C = { teal: '#0F8195', gold: '#C08A12', coral: '#E0583F', purple: '#988BBA', ink: '#40535B' };
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const ease = t => { t = clamp(t); return t * t * (3 - 2 * t); };
@@ -54,7 +54,7 @@ export function initHero(canvas) {
     if (!width || !height) return;
     ctx.clearRect(0, 0, width, height);
     const mobile = width < 640;
-    const time = elapsed % 12;
+    const time = reduce.matches ? 7.7 : elapsed % 12;
     const progress = clamp((time - .65) / 8.8);
     const steering = ease((time - 3.3) / 3.8);
     const fade = time > 10.9 ? 1 - ease((time - 10.9) / 1.1) : ease(time / .55);
@@ -150,14 +150,14 @@ export function initHero(canvas) {
     label('1.00',left+barW+10,barY+4,'#9AA7AA','left',9);
   }
   function tick(now) {
-    if (last && !paused && visible && !document.hidden) elapsed += Math.min((now-last)/1000,.05);
+    if (last && !paused && visible && !document.hidden && !reduce.matches) elapsed += Math.min((now-last)/1000,.05);
     last = now;
-    if (visible && !document.hidden && !paused) draw();
+    if (visible && !document.hidden && !paused && !reduce.matches) draw();
     frame = requestAnimationFrame(tick);
   }
   const observer = new ResizeObserver(resize); observer.observe(canvas);
   const intersection = new IntersectionObserver(entries=> { visible=entries[0].isIntersecting; if (visible) draw(); }); intersection.observe(canvas);
-  const changed = () => { paused = reduce.matches; if (paused) elapsed = 7.7; draw(); }; reduce.addEventListener('change',changed);
+  const changed = () => draw(); reduce.addEventListener('change',changed);
   resize(); frame=requestAnimationFrame(tick);
   return {
     setPaused(value) { paused=Boolean(value); draw(); },

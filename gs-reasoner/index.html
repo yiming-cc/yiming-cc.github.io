@@ -1,547 +1,201 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="description"
-        content="Reasoning in Space via Grounding in the World">
-  <meta name="keywords" content="Spatial Reasoning">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Reasoning in Space via Grounding in the World</title>
-
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-
-    gtag('js', new Date());
-
-    gtag('config', 'G-PYVRSFMDRL');
-  </script>
-
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-        rel="stylesheet">
-
-  <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
-  <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css">
-  <link rel="icon" href="/3dvision.svg">
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="GS-Reasoner grounds objects in 3D as an intermediate step in spatial reasoning. Explore the method, GCoT dataset and benchmark results.">
+  <title>GS-Reasoner · Reasoning in Space via Grounding in the World</title>
+  <link rel="icon" href="../3dvision.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="project.css">
+  <link rel="stylesheet" href="method-hero.css">
+  <link rel="stylesheet" href="data-section.css">
+  <link rel="stylesheet" href="results.css">
+  <script defer src="method-hero.js"></script>
+  <script defer src="data-section.js"></script>
 </head>
-<body>
-
-
-<section class="hero">
-  <div class="hero-body">
-    <div class="container is-max-desktop">
-      <div class="columns is-centered">
-        <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title" style="font-size: 2.7rem;">Reasoning in Space via Grounding in the World</h1>
-          <a target="_blank" style="color: #0F52BA; font-size: 30px; text-decoration: none; font-weight: bold;"><b>Sota on VSI-Bench</b> 🚀</a>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">
-              <a href="https://yiming-cc.github.io/">Yiming Chen</a><sup>1,2,3</sup>,</span>
-            <span class="author-block">
-              <a href="https://qizekun.github.io/">Zekun Qi</a><sup>4</sup>,</span>
-            <span class="author-block">
-              <a href="https://zhangwenyao1.github.io/">Wenyao Zhang</a><sup>5,6</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://jinx-ustc.github.io/jinxin.github.io/">Xin Jin</a><sup>6</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://lzrobots.github.io/">Li Zhang</a><sup>2,7*</sup>,
-            </span>
-            <span class="author-block">
-              <a href="https://ethliup.github.io/">Peidong Liu</a><sup>1*</sup>,
-            </span>
-          </div>
-
-          <div class="is-size-5 publication-authors">
-            <span class="author-block"><sup>1</sup>Westlake University</span>
-            <span class="author-block"><sup>2</sup>Shanghai Innovation Institute</span>
-            <span class="author-block"><sup>3</sup>Zhejiang University</span>
-            <span class="author-block"><sup>4</sup>Tsinghua University</span>
-            <span class="author-block"><sup>5</sup>Shanghai Jiao Tong University</span>
-            <span class="author-block"><sup>6</sup>Eastern Institute of Technology</span>
-            <span class="author-block"><sup>7</sup>Fudan University</span>
-          </div>
-
-          <div class="column has-text-centered">
-            <div class="publication-links">
-              <span class="link-block">
-                <a href="https://arxiv.org/pdf/2510.13800"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span>
-              <!-- Video Link. -->
-              <!-- <span class="link-block">
-                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-youtube"></i>
-                  </span>
-                  <span>Video</span>
-                </a>
-              </span> -->
-              <!-- Code Link. -->
-              <span class="link-block">
-                <a href="https://github.com/WU-CVGL/GS-Reasoner"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="fab fa-github"></i>
-                  </span>
-                  <span>Code</span>
-                  </a>
-              </span>
-              <!-- Dataset Link. -->
-              <span class="link-block">
-                <a href="https://huggingface.co/collections/ymccccc/gs-reasoner-68efc95783fb92bb44269f7a"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                      <i class="far fa-images"></i>
-                  </span>
-                  <span>Huggingface</span>
-                  </a>
-            </div>
-
-          </div>
-        </div>
-      </div>
+<body id="top">
+  <a class="skip" href="#method">Skip to method</a>
+  <header class="topbar">
+    <div class="bar-inner"><a href="#top" class="brand" aria-label="GS-Reasoner, back to top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7zM3 7l9 5 9-5m-9 5v10"/></svg> GS-Reasoner</a>
+    <nav aria-label="Project navigation"><a href="#method">Method</a><a href="#video">Video</a><a href="#abstract">Abstract</a><a href="#dataset">Data</a><a href="#results">Results</a></nav></div>
+  </header>
+  <main>
+    <div class="opening">
+      <header class="mast">
+        <p class="kicker"><span class="ink-dot"></span> ICLR 2026</p>
+        <h1>GS-Reasoner<span>Reasoning in Space via Grounding in the World</span></h1>
+        <p class="byline"><span><a href="https://yiming-cc.github.io/">Yiming Chen</a><sup>1,2,3</sup></span> · <span><a href="https://qizekun.github.io/">Zekun Qi</a><sup>4</sup></span> · <span><a href="https://zhangwenyao1.github.io/">Wenyao Zhang</a><sup>5,6</sup></span> · <span><a href="https://jinx-ustc.github.io/jinxin.github.io/">Xin Jin</a><sup>6</sup></span> · <span><a href="https://lzrobots.github.io/">Li Zhang</a><sup>2,7*</sup></span> · <span><a href="https://ethliup.github.io/">Peidong Liu</a><sup>1*</sup></span></p>
+        <p class="institutions"><span><sup>1</sup>Westlake University</span> <span><sup>2</sup>Shanghai Innovation Institute</span> <span><sup>3</sup>Zhejiang University</span> <span><sup>4</sup>Tsinghua University</span> <span><sup>5</sup>Shanghai Jiao Tong University</span> <span><sup>6</sup>Eastern Institute of Technology</span> <span><sup>7</sup>Fudan University</span></p>
+        <p class="corresponding">* Corresponding authors</p>
+        <div class="resources"><a class="primary" href="https://proceedings.iclr.cc/paper_files/paper/2026/file/6b4ac044095525631df38e20919b45d2-Paper-Conference.pdf">Paper <span>↗</span></a><a href="https://arxiv.org/abs/2510.13800">arXiv <span>↗</span></a><a href="https://github.com/WU-CVGL/GS-Reasoner">Code <span>↗</span></a><a href="https://huggingface.co/collections/ymccccc/gs-reasoner-68efc95783fb92bb44269f7a">Models &amp; Data <span>↗</span></a></div>
+      </header>
+      <section id="method" class="method wrap" aria-label="Animated method overview">
+        <div id="method-hero"><p>The model predicts 3D boxes autoregressively and uses them to answer spatial questions.</p><img src="static/images/pipeline.png" alt="Dual-path pooling aligns geometry with image patches before grounding and reasoning." width="900"></div>
+      </section>
     </div>
-  </div>
-</section>
+    <section id="video" class="chapter wrap">
+      <p class="kicker">01 / Demonstration</p><h2>In the wild</h2>
+      <p class="lede">Follow GS-Reasoner through a real scene captured on video, without sensor-provided 3D input.</p>
+      <figure class="film"><video controls playsinline preload="metadata" poster="static/images/demo-poster.jpg" aria-label="GS-Reasoner real-world demonstration"><source src="static/videos/demo_real_world_compress.mp4" type="video/mp4"></video><figcaption>Real-world demonstration <a href="static/videos/demo_real_world_compress.mp4">Open video ↗</a></figcaption></figure>
+    </section>
+    <section id="abstract" class="band"><div class="wrap chapter abstract-layout"><header><p class="kicker">02 / Paper</p><h2>Abstract</h2></header><div class="abstract-copy"><p>In this paper, we claim that 3D visual grounding is the cornerstone of spatial reasoning and introduce the <strong>Grounded-Spatial Reasoner (GS-Reasoner)</strong> to explore the effective spatial representations that bridge the gap between them. Existing 3D LLMs suffer from the absence of a unified 3D representation capable of jointly capturing semantic and geometric information. This deficiency is manifested either in poor performance on grounding or in an excessive reliance on external modules, ultimately hindering the seamless integration of grounding and spatial reasoning.</p>
+          <p>To address this, we propose a simple yet effective <strong>dual-path pooling</strong> mechanism that tightly aligns geometric features with both semantic and positional cues, constructing a unified image patch-based 3D representation that encapsulates all essential information without increasing the number of input tokens. Leveraging this holistic representation, GS-Reasoner is the first 3D LLM that achieves autoregressive grounding entirely without external modules while delivering performance comparable to state-of-the-art models, establishing a unified and self-contained framework for 3D spatial reasoning.</p>
+          <p>To further bridge grounding and spatial reasoning, we introduce the <strong>Grounded Chain-of-Thought (GCoT)</strong> dataset. This dataset is meticulously curated to include both 3D bounding box annotations for objects referenced in reasoning questions and step-by-step reasoning paths that integrate grounding as a core component of the problem-solving process. Extensive experiments demonstrate that GS-Reasoner achieves impressive results on 3D visual grounding, which in turn significantly enhances its spatial reasoning capabilities, leading to state-of-the-art performance.</p></div></div></section>
+    <section id="dataset" class="wrap chapter"><p class="kicker">03 / Dataset</p><h2>Grounded Chain-of-Thought</h2><div id="dataset-content"><p>GCoT pairs spatial questions with 3D object annotations and grounding-based reasoning paths.</p><a href="https://arxiv.org/html/2510.13800#S4">Dataset construction in the paper ↗</a></div></section>
+    <section id="results" class="band"><div class="wrap chapter"><p class="kicker">04 / Evaluation</p><h2>Experimental results</h2><div class="gs-results">
+<article class="gsr-benchmark" aria-labelledby="gsr-grounding">
+  <header class="gsr-heading"><h3 id="gsr-grounding">3D visual grounding</h3><a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/6b4ac044095525631df38e20919b45d2-Paper-Conference.pdf#page=7">Paper · Table 1 ↗</a></header>
+  <p class="gsr-context">GS-Reasoner reaches 61.7 F1@25 on Multi3DRef. At the stricter 0.50 threshold, ROSS3D with mesh proposals scores 54.3 versus 45.3 for GS-Reasoner.</p>
+  <div class="gsr-table-wrap" tabindex="0" role="region" aria-label="3D visual grounding, main comparison">
+  <table>
+    <caption class="gsr-sr">3D visual grounding · main comparison · ICLR 2026, Table 1</caption>
+    <colgroup><col></colgroup><colgroup span="2"></colgroup><colgroup span="2"></colgroup><colgroup span="1"></colgroup><colgroup span="1"></colgroup>
+    <thead>
+      <tr><th scope="col" rowspan="2">Method</th><th scope="colgroup" colspan="2">ScanRefer</th><th scope="colgroup" colspan="2">Multi3DRef</th><th scope="colgroup" colspan="1">SR3D</th><th scope="colgroup" colspan="1">NR3D</th></tr>
+      <tr><th scope="col">Acc@25</th><th scope="col">Acc@50</th><th scope="col">F1@25</th><th scope="col">F1@50</th><th scope="col">Acc@25</th><th scope="col">Acc@25</th></tr>
+    </thead>
+    <tbody>
+      <tr class="gsr-ours"><th scope="row">GS-Reasoner<small>Autoregressive grounding</small></th><td>60.8</td><td>42.2</td><td>61.7</td><td>45.3</td><td>56.7</td><td>50.0</td></tr>
+      <tr><th scope="row">3D-LLM<small>Autoregressive grounding</small></th><td>30.3</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">LLaVA-3D<small>External grounding module</small></th><td>54.1</td><td>42.2</td><td>54.3</td><td>47.2</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">ROSS3D<small>Mesh proposals</small></th><td>61.1</td><td>54.4</td><td>59.6</td><td>54.3</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">UniVLG<small>Grounding expert</small></th><td>63.5</td><td>56.4</td><td>—</td><td>—</td><td>73.0</td><td>56.3</td></tr>
+    </tbody>
+  </table>
+</div>
+  <details class="gsr-more">
+    <summary>Additional baselines (9)</summary>
+    <div class="gsr-table-wrap" tabindex="0" role="region" aria-label="3D visual grounding, additional baselines">
+  <table>
+    <caption class="gsr-sr">3D visual grounding · additional baselines · ICLR 2026, Table 1</caption>
+    <colgroup><col></colgroup><colgroup span="2"></colgroup><colgroup span="2"></colgroup><colgroup span="1"></colgroup><colgroup span="1"></colgroup>
+    <thead>
+      <tr><th scope="col" rowspan="2">Method</th><th scope="colgroup" colspan="2">ScanRefer</th><th scope="colgroup" colspan="2">Multi3DRef</th><th scope="colgroup" colspan="1">SR3D</th><th scope="colgroup" colspan="1">NR3D</th></tr>
+      <tr><th scope="col">Acc@25</th><th scope="col">Acc@50</th><th scope="col">F1@25</th><th scope="col">F1@50</th><th scope="col">Acc@25</th><th scope="col">Acc@25</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">3D-VisTA<small>Grounding expert</small></th><td>51.0</td><td>46.2</td><td>—</td><td>—</td><td>56.5</td><td>47.7</td></tr>
+      <tr><th scope="row">PQ3D<small>Grounding expert</small></th><td>56.7</td><td>51.8</td><td>—</td><td>—</td><td>62.0</td><td>52.2</td></tr>
+      <tr><th scope="row">Locate 3D<small>Grounding expert</small></th><td>61.1</td><td>50.9</td><td>—</td><td>—</td><td>68.2</td><td>56.1</td></tr>
+      <tr><th scope="row">Chat-Scene<small>Mesh proposals</small></th><td>55.5</td><td>50.2</td><td>57.1</td><td>52.4</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">Inst3D-LMM<small>Mesh proposals</small></th><td>57.8</td><td>51.6</td><td>58.3</td><td>53.5</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">Video-3D LLM<small>Mesh proposals</small></th><td>58.1</td><td>51.7</td><td>58.0</td><td>52.7</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">SeeGround<small>Mesh proposals</small></th><td>44.1</td><td>39.4</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">Grounded 3D-LLM<small>External grounding module</small></th><td>48.6</td><td>44.0</td><td>44.7</td><td>40.8</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">ReGround3D<small>External grounding module</small></th><td>53.1</td><td>41.2</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+  </details>
+  <p class="gsr-note">The suffixes @25 and @50 denote IoU thresholds of 0.25 and 0.50. A dash marks an unreported score.</p>
+</article>
 
-<section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <div class="video-container">
-        <video id="teaser" muted loop playsinline height="100%">
-          <source src="./static/videos/demo_real_world_compress.mp4"
-                  type="video/mp4">
-        </video>
-        <div class="play-button-overlay" id="playButtonOverlay">
-          <button class="play-button" id="playButton">
-            <i class="fas fa-play"></i>
-          </button>
-        </div>
-        
-        <!-- 视频控制器 -->
-        <div class="video-controls" id="videoControls">
-          <div class="progress-container">
-            <div class="progress-bar" id="progressBar">
-              <div class="progress-filled" id="progressFilled"></div>
-              <div class="progress-handle" id="progressHandle"></div>
-            </div>
-          </div>
-          
-          <div class="controls-row">
-            <div class="left-controls">
-              <button class="control-btn" id="playPauseBtn">
-                <i class="fas fa-play"></i>
-              </button>
-              <button class="control-btn" id="muteBtn">
-                <i class="fas fa-volume-up"></i>
-              </button>
-              <div class="volume-container">
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="1">
-              </div>
-              <span class="time-display" id="timeDisplay">0:00 / 0:00</span>
-            </div>
-            
-            <div class="right-controls">
-              <button class="control-btn" id="fullscreenBtn">
-                <i class="fas fa-expand"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- <h2 class="subtitle has-text-centered">
-        video here
-      </h2> -->
+<article class="gsr-benchmark" aria-labelledby="gsr-spatial">
+  <header class="gsr-heading"><h3 id="gsr-spatial">Spatial reasoning</h3><a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/6b4ac044095525631df38e20919b45d2-Paper-Conference.pdf#page=7">Paper · Table 2 ↗</a></header>
+  <p class="gsr-context">On VSI-Bench, GS-Reasoner averages 64.7 with predicted depth and 70.1 with ground-truth depth. Relative direction scores 88.9 and 90.5 under the two conditions.</p>
+  <div class="gsr-table-wrap" tabindex="0" role="region" aria-label="Spatial reasoning, main comparison">
+  <table>
+    <caption class="gsr-sr">Spatial reasoning · main comparison · ICLR 2026, Table 2</caption>
+    <colgroup><col></colgroup><colgroup span="2"></colgroup><colgroup span="4"></colgroup><colgroup span="4"></colgroup>
+    <thead>
+      <tr><th scope="col" rowspan="2">Method</th><th scope="colgroup" colspan="2">Overall</th><th scope="colgroup" colspan="4">Numerical questions</th><th scope="colgroup" colspan="4">Multiple-choice questions</th></tr>
+      <tr><th scope="col">Rank</th><th scope="col">Average</th><th scope="col">Object count</th><th scope="col">Absolute distance</th><th scope="col">Object size</th><th scope="col">Room size</th><th scope="col">Relative distance</th><th scope="col">Relative direction</th><th scope="col">Route planning</th><th scope="col">Appearance order</th></tr>
+    </thead>
+    <tbody>
+      <tr class="gsr-ours"><th scope="row">GS-Reasoner (predicted depth)<small>Spatial reasoning model</small></th><td>1</td><td>64.7</td><td>69.1</td><td>61.9</td><td>70.0</td><td>65.7</td><td>65.4</td><td>88.9</td><td>44.3</td><td>52.3</td></tr>
+      <tr class="gsr-ours"><th scope="row">GS-Reasoner (ground-truth depth)<small>Spatial reasoning model</small></th><td>—</td><td>70.1</td><td>70.9</td><td>73.6</td><td>77.8</td><td>81.8</td><td>70.6</td><td>90.5</td><td>42.8</td><td>52.6</td></tr>
+      <tr><th scope="row">VLM-3R-7B<small>Spatial reasoning model</small></th><td>2</td><td>60.9</td><td>70.2</td><td>49.4</td><td>69.2</td><td>67.1</td><td>65.4</td><td>80.5</td><td>45.4</td><td>40.1</td></tr>
+      <tr><th scope="row">Spatial-MLLM-4B<small>Spatial reasoning model</small></th><td>3</td><td>48.4</td><td>65.3</td><td>34.8</td><td>63.1</td><td>45.1</td><td>41.3</td><td>46.2</td><td>33.5</td><td>46.3</td></tr>
+    </tbody>
+  </table>
+</div>
+  <details class="gsr-more">
+    <summary>Additional baselines (18)</summary>
+    <div class="gsr-table-wrap" tabindex="0" role="region" aria-label="Spatial reasoning, additional baselines">
+  <table>
+    <caption class="gsr-sr">Spatial reasoning · additional baselines · ICLR 2026, Table 2</caption>
+    <colgroup><col></colgroup><colgroup span="2"></colgroup><colgroup span="4"></colgroup><colgroup span="4"></colgroup>
+    <thead>
+      <tr><th scope="col" rowspan="2">Method</th><th scope="colgroup" colspan="2">Overall</th><th scope="colgroup" colspan="4">Numerical questions</th><th scope="colgroup" colspan="4">Multiple-choice questions</th></tr>
+      <tr><th scope="col">Rank</th><th scope="col">Average</th><th scope="col">Object count</th><th scope="col">Absolute distance</th><th scope="col">Object size</th><th scope="col">Room size</th><th scope="col">Relative distance</th><th scope="col">Relative direction</th><th scope="col">Route planning</th><th scope="col">Appearance order</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Chance Level (Random)<small>Chance baseline</small></th><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>25.0</td><td>36.1</td><td>28.3</td><td>25.0</td></tr>
+      <tr><th scope="row">Chance Level (Frequency)<small>Chance baseline</small></th><td>—</td><td>34.0</td><td>62.1</td><td>32.0</td><td>29.9</td><td>33.1</td><td>25.1</td><td>47.9</td><td>28.4</td><td>25.2</td></tr>
+      <tr><th scope="row">Human Level<small>VSI-Bench Tiny</small></th><td>—</td><td>79.2</td><td>94.3</td><td>47.0</td><td>60.4</td><td>45.9</td><td>94.7</td><td>95.8</td><td>95.8</td><td>100.0</td></tr>
+      <tr><th scope="row">Gemini-1.5 Flash<small>VSI-Bench Tiny</small></th><td>—</td><td>45.7</td><td>50.8</td><td>33.6</td><td>56.5</td><td>45.2</td><td>48.0</td><td>39.8</td><td>32.7</td><td>59.2</td></tr>
+      <tr><th scope="row">Gemini-1.5 Pro<small>VSI-Bench Tiny</small></th><td>—</td><td>48.8</td><td>49.6</td><td>28.8</td><td>58.6</td><td>49.4</td><td>46.0</td><td>48.1</td><td>42.0</td><td>68.0</td></tr>
+      <tr><th scope="row">Gemini-2.0 Flash<small>VSI-Bench Tiny</small></th><td>—</td><td>45.4</td><td>52.4</td><td>30.6</td><td>66.7</td><td>31.8</td><td>56.0</td><td>46.3</td><td>24.5</td><td>55.1</td></tr>
+      <tr><th scope="row">GPT-4o<small>Proprietary model</small></th><td>3</td><td>34.0</td><td>46.2</td><td>5.3</td><td>43.8</td><td>38.2</td><td>37.0</td><td>41.3</td><td>31.5</td><td>28.5</td></tr>
+      <tr><th scope="row">Gemini-1.5 Flash<small>Proprietary model</small></th><td>2</td><td>42.1</td><td>49.8</td><td>30.8</td><td>53.5</td><td>54.4</td><td>37.7</td><td>41.0</td><td>31.5</td><td>37.8</td></tr>
+      <tr><th scope="row">Gemini-1.5 Pro<small>Proprietary model</small></th><td>1</td><td>45.4</td><td>56.2</td><td>30.9</td><td>64.1</td><td>43.6</td><td>51.3</td><td>46.3</td><td>36.0</td><td>34.6</td></tr>
+      <tr><th scope="row">InternVL2-40B<small>Open-source VLM</small></th><td>3</td><td>36.0</td><td>34.9</td><td>26.9</td><td>46.5</td><td>31.8</td><td>42.1</td><td>32.2</td><td>34.0</td><td>39.6</td></tr>
+      <tr><th scope="row">LongVILA-8B<small>Open-source VLM</small></th><td>9</td><td>21.6</td><td>29.1</td><td>9.1</td><td>16.7</td><td>0.0</td><td>29.6</td><td>30.7</td><td>32.5</td><td>25.5</td></tr>
+      <tr><th scope="row">VILA-1.5-40B<small>Open-source VLM</small></th><td>7</td><td>31.2</td><td>22.4</td><td>24.8</td><td>48.7</td><td>22.7</td><td>40.5</td><td>25.7</td><td>31.5</td><td>32.9</td></tr>
+      <tr><th scope="row">LongVA-7B<small>Open-source VLM</small></th><td>8</td><td>29.2</td><td>38.0</td><td>16.6</td><td>38.9</td><td>22.2</td><td>33.1</td><td>43.3</td><td>25.4</td><td>15.7</td></tr>
+      <tr><th scope="row">LLaVA-NeXT-Video-7B<small>Open-source VLM</small></th><td>4</td><td>35.6</td><td>48.5</td><td>14.0</td><td>47.8</td><td>24.2</td><td>43.5</td><td>42.4</td><td>34.0</td><td>30.6</td></tr>
+      <tr><th scope="row">LLaVA-NeXT-Video-72B<small>Open-source VLM</small></th><td>1</td><td>40.9</td><td>48.9</td><td>22.8</td><td>57.4</td><td>35.3</td><td>42.4</td><td>36.7</td><td>35.0</td><td>48.6</td></tr>
+      <tr><th scope="row">QWen2.5VL-7B<small>Open-source VLM</small></th><td>5</td><td>33.0</td><td>40.9</td><td>14.8</td><td>43.4</td><td>10.7</td><td>38.6</td><td>38.5</td><td>33.0</td><td>29.8</td></tr>
+      <tr><th scope="row">LLaVA-OneVision-7B<small>Open-source VLM</small></th><td>6</td><td>32.4</td><td>47.7</td><td>20.2</td><td>47.4</td><td>12.3</td><td>42.5</td><td>35.2</td><td>29.4</td><td>24.4</td></tr>
+      <tr><th scope="row">LLaVA-OneVision-72B<small>Open-source VLM</small></th><td>2</td><td>40.2</td><td>43.5</td><td>23.9</td><td>57.6</td><td>37.5</td><td>42.5</td><td>39.9</td><td>32.5</td><td>44.6</td></tr>
+    </tbody>
+  </table>
+</div>
+  </details>
+  <p class="gsr-note">Rank is within each model group. Tiny-set results use a different evaluation subset. A dash marks an unreported value.</p>
+</article>
 
-      <!-- <img src="./static/images/teaser.png" alt="Teaser" style="max-width: 100%; height: auto;"> -->
-       <div class="columns is-centered has-text-centered" style="margin-top: 5px;">
-        <div class="content has-text-justified">
-          The video is captured in the wild without sensory 3D inputs, highlighting the strong generalization capability of our model.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-    <!-- Abstract. -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-            In this paper, we claim that 3D visual grounding is the cornerstone of spatial reasoning and introduce the <strong>Grounded-Spatial Reasoner (GS-Reasoner)</strong> to explore the effective spatial representations that bridge the gap between them.
-            Existing 3D LLMs suffer from the absence of a unified 3D representation capable of jointly capturing semantic and geometric information.
-            This deficiency is manifested either in poor performance on grounding or in an excessive reliance on external modules, ultimately hindering the seamless integration of grounding and spatial reasoning.
-            To address this, we propose a simple yet effective <strong>dual-path pooling</strong> mechanism that tightly aligns geometric features with both semantic and positional cues, constructing a unified image patch-based 3D representation that encapsulates all essential information without increasing the number of input tokens. Leveraging this holistic representation, GS-Reasoner is the first 3D LLM that achieves autoregressive grounding entirely without external modules while delivering performance comparable to state-of-the-art models, establishing a unified and self-contained framework for 3D spatial reasoning.
-            To further bridge grounding and spatial reasoning, we introduce the <strong>Grounded Chain-of-Thought (GCoT)</strong> dataset. This dataset is meticulously curated to include both 3D bounding box annotations for objects referenced in reasoning questions and step-by-step reasoning paths that integrate grounding as a core component of the problem-solving process.
-            Extensive experiments demonstrate that GS-Reasoner achieves impressive results on 3D visual grounding, which in turn significantly enhances its spatial reasoning capabilities, leading to state-of-the-art performance.
-
-        </div>
-      </div>
-    </div>
-    <!--/ Abstract. -->
-
-    
-  </div>
-</section>
-
-
-<section class="section">
-  <div class="container is-max-desktop">
-    
-    <!-- Method Overview -->
-    <div class="columns is-centered has-text-centered">
-      <div class="column">
-        <div class="content">
-          <h2 class="title is-3">Method Overview</h2>
-            <div class="has-text-centered">
-              <!-- <iframe src="./static/images/pipeline_final.pdf" width="100%" 
-            height="300px" style="border: none;"></iframe> -->
-              <img src="./static/images/pipeline.png" alt="Method Pipeline" style="max-width: 100%; height: auto;">
-              <div class="content has-text-justified">
-                <strong>Overview of GS-Reasoner framework.</strong> Our method builds a semantic-geometric hybrid 3D scene representation, enabling 3D LLM to perform 3D visual grounding autoregressively, which allows grounding to be integrated as a chain-of-thought within the spatial reasoning process. 
-              </div>
-            </div>
-        </div>
-      </div>
-    </div>
-    <!--/ Method Overview -->
-
-    <!-- Dataset Overview -->
-    <div class="columns is-centered has-text-centered" style="margin-top: 5rem;">
-      <div class="column">
-        <div class="content">
-          <h2 class="title is-3">Dataset Overview</h2>
-            <div class="has-text-centered">
-              <!-- <iframe src="./static/images/pipeline_final.pdf" width="100%" 
-            height="300px" style="border: none;"></iframe> -->
-              <img src="./static/images/Dataset.png" alt="Dataset Pipeline" style="max-width: 100%; height: auto;">
-              <div class="content has-text-justified">
-                <strong>Overview of Grounded Chain-of-Thought (GCoT) Dataset.</strong> We first construct spatial QA pairs without CoT, and then prompt GPT-4o to generate CoT paths based on the bird's-eye view, object information, and QA pairs.
-              </div>
-            </div>
-        </div>
-      </div>
-    </div>
-    <!--/ Dataset Overview -->
-
-
-    <!-- Performance. -->
-    <div class="columns is-centered has-text-centered" style="margin-top: 5rem;">
-      <div class="column">
-        <h2 class="title is-3">Performance</h2>
-
-        <h3 class="title is-5">Spatial Reasoning (VSI-Bench)</h3>
-        <img src="./static/images/sp_tab.png" alt="Spatial Reasoning Table" style="max-width: 100%; height: auto;">
-        <div class="content has-text-justified">
-          <strong>Evaluation on VSI-Bench.</strong> GS-Reasoner achieves state-of-the-art performance on most tasks, with further gains using more accurate (ground-truth) depth.
-        </div>
-
-        <h3 class="title is-5" style="margin-top:3rem;">3D Visual Grounding</h3>
-        <img src="./static/images/3dvg_tab.png" alt="3D Visual Grounding Table" style="max-width: 100%; height: auto;">
-        <div class="content has-text-justified">
-          <strong>Evaluation on 3D Visual Grounding.</strong> GS-Reasoner achieves performance comparable to 3D LLMs using mesh proposals or external grounding, without any external components.
-        </div>
-
-        <h3 class="title is-5" style="margin-top:3rem;">General 3D Tasks</h3>
-        <img src="./static/images/g3d_tab.png" alt="General 3D Tasks Table" style="max-width: 100%; height: auto;">
-        <div class="content has-text-justified">
-          <strong>Evaluation on General 3D Tasks.</strong> GS-Reasoner outperforms state-of-the-art 3D LLMs on Scan2Cap and achieves comparable results on ScanQA and SQA3D.
-        </div>
-
-      </div>
-    </div>
-    <!--/ Performance. -->
-
-  </div>
-</section>
-
-
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code>@misc{chen2025reasoningspacegroundingworld
-      title={Reasoning in Space via Grounding in the World}, 
-      author={Yiming Chen and Zekun Qi and Wenyao Zhang and Xin Jin and Li Zhang and Peidong Liu},
-      year={2025},
-      eprint={2510.13800},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2510.13800}, 
-}</code></pre>
-  </div>
-</section>
-
-
-<footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p>
-            This website is licensed under a <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-          <p>
-            We thank the authors of <a href="https://nerfies.github.io/">Nerfies</a> that kindly open sourced the template of this website.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const video = document.getElementById('teaser');
-  const playButton = document.getElementById('playButton');
-  const playButtonOverlay = document.getElementById('playButtonOverlay');
-  const videoControls = document.getElementById('videoControls');
-  
-  // 控制器元素
-  const playPauseBtn = document.getElementById('playPauseBtn');
-  const muteBtn = document.getElementById('muteBtn');
-  const volumeSlider = document.getElementById('volumeSlider');
-  const progressBar = document.getElementById('progressBar');
-  const progressFilled = document.getElementById('progressFilled');
-  const progressHandle = document.getElementById('progressHandle');
-  const timeDisplay = document.getElementById('timeDisplay');
-  const fullscreenBtn = document.getElementById('fullscreenBtn');
-  
-  let isDragging = false;
-  let controlsTimeout;
-  
-  // 格式化时间显示
-  function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  }
-  
-  // 更新进度条
-  function updateProgress() {
-    if (video.duration) {
-      const progress = (video.currentTime / video.duration) * 100;
-      progressFilled.style.width = progress + '%';
-      progressHandle.style.left = progress + '%';
-    }
-  }
-  
-  // 更新时间显示
-  function updateTime() {
-    timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
-  }
-  
-  // 显示控制器
-  function showControls() {
-    videoControls.classList.add('show');
-    clearTimeout(controlsTimeout);
-    controlsTimeout = setTimeout(() => {
-      if (!video.paused) {
-        videoControls.classList.remove('show');
-      }
-    }, 3000);
-  }
-  
-  // 隐藏控制器
-  function hideControls() {
-    videoControls.classList.remove('show');
-  }
-  
-  // 播放/暂停功能
-  function togglePlayPause() {
-    if (video.paused) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  }
-  
-  // 静音/取消静音
-  function toggleMute() {
-    video.muted = !video.muted;
-    volumeSlider.value = video.muted ? 0 : video.volume;
-  }
-  
-  // 全屏功能
-  function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      video.requestFullscreen().catch(err => {
-        console.log('Error attempting to enable fullscreen:', err);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  }
-  
-  // 设置视频时间
-  function setVideoTime(percent) {
-    video.currentTime = (percent / 100) * video.duration;
-  }
-  
-  // 事件监听器
-  
-  // 点击播放按钮开始播放视频
-  playButton.addEventListener('click', function() {
-    video.play();
-    playButtonOverlay.classList.add('hidden');
-    showControls();
-  });
-  
-  // 播放/暂停按钮
-  playPauseBtn.addEventListener('click', togglePlayPause);
-  
-  // 静音按钮
-  muteBtn.addEventListener('click', toggleMute);
-  
-  // 音量滑块
-  volumeSlider.addEventListener('input', function() {
-    video.volume = this.value;
-    video.muted = this.value == 0;
-  });
-  
-  // 全屏按钮
-  fullscreenBtn.addEventListener('click', toggleFullscreen);
-  
-  // 进度条点击
-  progressBar.addEventListener('click', function(e) {
-    const rect = this.getBoundingClientRect();
-    const percent = ((e.clientX - rect.left) / rect.width) * 100;
-    setVideoTime(percent);
-  });
-  
-  // 进度条拖拽
-  progressHandle.addEventListener('mousedown', function(e) {
-    isDragging = true;
-    e.preventDefault();
-  });
-  
-  document.addEventListener('mousemove', function(e) {
-    if (isDragging) {
-      const rect = progressBar.getBoundingClientRect();
-      const percent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
-      setVideoTime(percent);
-    }
-  });
-  
-  document.addEventListener('mouseup', function() {
-    isDragging = false;
-  });
-  
-  // 视频事件监听
-  video.addEventListener('play', function() {
-    playButtonOverlay.classList.add('hidden');
-    playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-    showControls();
-  });
-  
-  video.addEventListener('pause', function() {
-    playButtonOverlay.classList.remove('hidden');
-    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    showControls();
-  });
-  
-  video.addEventListener('ended', function() {
-    playButtonOverlay.classList.remove('hidden');
-    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-    video.currentTime = 0;
-    updateProgress();
-  });
-  
-  video.addEventListener('timeupdate', function() {
-    if (!isDragging) {
-      updateProgress();
-    }
-    updateTime();
-  });
-  
-  video.addEventListener('loadedmetadata', function() {
-    updateTime();
-  });
-  
-  video.addEventListener('volumechange', function() {
-    muteBtn.innerHTML = video.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-    volumeSlider.value = video.muted ? 0 : video.volume;
-  });
-  
-  // 鼠标移动显示控制器
-  video.addEventListener('mousemove', showControls);
-  video.addEventListener('mouseleave', function() {
-    if (!video.paused) {
-      hideControls();
-    }
-  });
-  
-  // 点击视频播放/暂停
-  video.addEventListener('click', function(e) {
-    if (e.target === video) {
-      togglePlayPause();
-    }
-  });
-  
-  // 键盘控制
-  document.addEventListener('keydown', function(e) {
-    if (video === document.activeElement || video.contains(document.activeElement)) {
-      switch(e.code) {
-        case 'Space':
-          e.preventDefault();
-          togglePlayPause();
-          break;
-        case 'KeyM':
-          e.preventDefault();
-          toggleMute();
-          break;
-        case 'KeyF':
-          e.preventDefault();
-          toggleFullscreen();
-          break;
-        case 'ArrowLeft':
-          e.preventDefault();
-          video.currentTime = Math.max(0, video.currentTime - 10);
-          break;
-        case 'ArrowRight':
-          e.preventDefault();
-          video.currentTime = Math.min(video.duration, video.currentTime + 10);
-          break;
-      }
-    }
-  });
-  
-  // 全屏状态变化
-  document.addEventListener('fullscreenchange', function() {
-    fullscreenBtn.innerHTML = document.fullscreenElement ? 
-      '<i class="fas fa-compress"></i>' : '<i class="fas fa-expand"></i>';
-  });
-});
-</script>
-
+<article class="gsr-benchmark" aria-labelledby="gsr-general">
+  <header class="gsr-heading"><h3 id="gsr-general">General 3D tasks</h3><a href="https://proceedings.iclr.cc/paper_files/paper/2026/file/6b4ac044095525631df38e20919b45d2-Paper-Conference.pdf#page=8">Paper · Table 3 ↗</a></header>
+  <p class="gsr-context">For dense captioning on Scan2Cap, GS-Reasoner scores 101.0 CIDEr. On the question-answering benchmarks, it reaches 29.9 exact match on ScanQA and 59.9 on SQA3D.</p>
+  <div class="gsr-table-wrap" tabindex="0" role="region" aria-label="General 3D tasks, main comparison">
+  <table>
+    <caption class="gsr-sr">General 3D tasks · main comparison · ICLR 2026, Table 3</caption>
+    <colgroup><col></colgroup><colgroup span="4"></colgroup><colgroup span="5"></colgroup><colgroup span="1"></colgroup>
+    <thead>
+      <tr><th scope="col" rowspan="2">Method</th><th scope="colgroup" colspan="4">Scan2Cap</th><th scope="colgroup" colspan="5">ScanQA</th><th scope="colgroup" colspan="1">SQA3D</th></tr>
+      <tr><th scope="col">BLEU-4</th><th scope="col">ROUGE</th><th scope="col">CIDEr</th><th scope="col">METEOR</th><th scope="col">BLEU-4</th><th scope="col">ROUGE</th><th scope="col">CIDEr</th><th scope="col">METEOR</th><th scope="col">EM</th><th scope="col">EM</th></tr>
+    </thead>
+    <tbody>
+      <tr class="gsr-ours"><th scope="row">GS-Reasoner</th><td>47.6</td><td>69.2</td><td>101.0</td><td>32.1</td><td>16.2</td><td>49.2</td><td>102.6</td><td>19.8</td><td>29.9</td><td>59.9</td></tr>
+      <tr><th scope="row">ROSS3D</th><td>43.4</td><td>66.9</td><td>81.3</td><td>30.3</td><td>17.9</td><td>50.7</td><td>107.0</td><td>20.9</td><td>30.8</td><td>63.0</td></tr>
+      <tr><th scope="row">Video-3D LLM</th><td>42.4</td><td>62.3</td><td>83.8</td><td>28.9</td><td>16.2</td><td>49.0</td><td>102.1</td><td>19.8</td><td>30.1</td><td>58.6</td></tr>
+      <tr><th scope="row">LLaVA-3D</th><td>41.1</td><td>63.4</td><td>79.2</td><td>30.2</td><td>14.5</td><td>50.1</td><td>91.7</td><td>20.7</td><td>27.0</td><td>55.6</td></tr>
+    </tbody>
+  </table>
+</div>
+  <details class="gsr-more">
+    <summary>Additional baselines (7)</summary>
+    <div class="gsr-table-wrap" tabindex="0" role="region" aria-label="General 3D tasks, additional baselines">
+  <table>
+    <caption class="gsr-sr">General 3D tasks · additional baselines · ICLR 2026, Table 3</caption>
+    <colgroup><col></colgroup><colgroup span="4"></colgroup><colgroup span="5"></colgroup><colgroup span="1"></colgroup>
+    <thead>
+      <tr><th scope="col" rowspan="2">Method</th><th scope="colgroup" colspan="4">Scan2Cap</th><th scope="colgroup" colspan="5">ScanQA</th><th scope="colgroup" colspan="1">SQA3D</th></tr>
+      <tr><th scope="col">BLEU-4</th><th scope="col">ROUGE</th><th scope="col">CIDEr</th><th scope="col">METEOR</th><th scope="col">BLEU-4</th><th scope="col">ROUGE</th><th scope="col">CIDEr</th><th scope="col">METEOR</th><th scope="col">EM</th><th scope="col">EM</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">3D-LLM(flamingo)</th><td>—</td><td>—</td><td>—</td><td>—</td><td>7.2</td><td>32.3</td><td>59.2</td><td>12.2</td><td>20.4</td><td>—</td></tr>
+      <tr><th scope="row">3D-LLM(BLIP2-flant5)</th><td>—</td><td>—</td><td>—</td><td>—</td><td>12.0</td><td>35.7</td><td>69.4</td><td>14.5</td><td>20.5</td><td>—</td></tr>
+      <tr><th scope="row">LL3DA</th><td>36.8</td><td>55.1</td><td>65.2</td><td>26.0</td><td>13.5</td><td>37.3</td><td>76.8</td><td>15.9</td><td>—</td><td>—</td></tr>
+      <tr><th scope="row">Chat-3Dv2</th><td>—</td><td>—</td><td>—</td><td>—</td><td>14.0</td><td>—</td><td>87.6</td><td>—</td><td>—</td><td>54.7</td></tr>
+      <tr><th scope="row">LEO</th><td>36.9</td><td>57.8</td><td>68.4</td><td>27.7</td><td>13.2</td><td>49.2</td><td>101.4</td><td>20.0</td><td>24.5</td><td>50.0</td></tr>
+      <tr><th scope="row">Scene-LLM</th><td>—</td><td>—</td><td>—</td><td>—</td><td>12.0</td><td>40.0</td><td>80.0</td><td>16.6</td><td>27.2</td><td>54.2</td></tr>
+      <tr><th scope="row">ChatScene</th><td>36.3</td><td>58.1</td><td>77.2</td><td>28.0</td><td>14.3</td><td>41.6</td><td>87.7</td><td>18.0</td><td>21.6</td><td>54.6</td></tr>
+    </tbody>
+  </table>
+</div>
+  </details>
+  <p class="gsr-note">EM denotes exact match. Higher scores are better across all metrics. A dash marks an unreported score.</p>
+</article>
+</div></div></section>
+    <section class="wrap cite" id="BibTeX"><details><summary>Cite this paper <span>BibTeX</span></summary><pre><code>@inproceedings{chen2026gsreasoner,
+  title = {Reasoning in Space via Grounding in the World},
+  author = {Chen, Yiming and Qi, Zekun and Zhang, Wenyao and Jin, Xin and Zhang, Li and Liu, Peidong},
+  booktitle = {International Conference on Learning Representations},
+  year = {2026}
+}</code></pre></details></section>
+  </main>
+  <footer class="foot"><div class="wrap"><a href="../">Yiming Chen ↗</a><span>Website: <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> · Original template: <a href="https://nerfies.github.io/">Nerfies</a></span><a href="#top">Back to top ↑</a></div></footer>
 </body>
 </html>

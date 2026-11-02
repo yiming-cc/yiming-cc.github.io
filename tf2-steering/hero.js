@@ -1,5 +1,5 @@
 /** A conceptual 2D projection of flow-matching action generation, not rollout data. */
-export function initHero(canvas) {
+export function initHero(canvas, { compact = false } = {}) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return { setPaused() {}, destroy() {} };
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -20,7 +20,9 @@ export function initHero(canvas) {
     const spread = Math.sin(Math.PI * t) * lane;
     return {
       x: width * (.13 + .72 * t),
-      y: height * (.77 + .032 * Math.sin(t * Math.PI * 1.8) - .03 * t - .108 * ease((t - .28) / .72) * refinement) + spread
+      y: height * (compact
+        ? .66 + .05 * Math.sin(t * Math.PI * 1.8) - .03 * t - .25 * ease((t - .28) / .72) * refinement
+        : .77 + .032 * Math.sin(t * Math.PI * 1.8) - .03 * t - .108 * ease((t - .28) / .72) * refinement) + spread
     };
   }
   function arrow(x, y, dx, dy, color, opacity, weight = 1, head = 4) {
@@ -59,6 +61,35 @@ export function initHero(canvas) {
     const steering = ease((time - 3.3) / 3.8);
     const fade = time > 10.9 ? 1 - ease((time - 10.9) / 1.1) : ease(time / .55);
     const active = progress > .30;
+    if (compact) {
+      ctx.fillStyle = '#f8f9fa'; ctx.fillRect(0, 0, width, height);
+      label('FLOW-MATCHING REFINEMENT', width * .5, 14, C.ink, 'center', 8);
+      for (let y = 30; y < height - 25; y += 17) {
+        for (let x = 12; x < width - 8; x += 18) {
+          const t = clamp((x / width - .13) / .72);
+          const slope = -.1 + .18 * Math.cos(t * Math.PI * 1.8) - steering * .46 * Math.sin(Math.PI * t);
+          arrow(x, y, 7, slope * 7, C.teal, .15, .6, 2);
+        }
+      }
+      ctx.save(); ctx.setLineDash([3, 3]); line(0, 0, .5, C.teal, 1, 1); ctx.restore();
+      line(1, 0, .18, C.gold, 1, 1);
+      line(0, 0, .75 * fade, C.teal, progress, 1.5);
+      if (steering > 0) line(steering, 0, fade, C.gold, progress, 1.8);
+      for (const t of [.4, .57, .74, .91]) {
+        const born = ease((progress - t) * 14);
+        const base = point(t), refined = point(t, steering);
+        arrow(base.x, base.y, refined.x - base.x, refined.y - base.y, C.gold, born * steering * fade, .9, 2.5);
+      }
+      const head = point(progress, steering);
+      ctx.fillStyle = active ? C.gold : C.teal; ctx.globalAlpha = fade;
+      ctx.beginPath(); ctx.arc(head.x, head.y, 3, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+      const start = point(0), baseEnd = point(1), refinedEnd = point(1, 1);
+      label('Noise', start.x, start.y + 13, '#84939A', 'center', 8);
+      label('Base', baseEnd.x, baseEnd.y + 13, C.teal, 'center', 8);
+      label('Refined', refinedEnd.x, refinedEnd.y - 8, C.gold, 'center', 8);
+      label('v refined = v base + Δv tactile', width * .5, height - 10, C.ink, 'center', 8);
+      return;
+    }
     glow(width * .18, height * .72, width * .39, 'rgba(152,139,186,.105)');
     glow(width * .76, height * .72, width * .3, 'rgba(224,88,63,.065)');
     glow(width * .57, height * .9, width * .3, 'rgba(15,129,149,.05)');

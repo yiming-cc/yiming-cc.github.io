@@ -1,0 +1,67 @@
+#method-hero {
+  --gsh-ink: #213c40;
+  --gsh-muted: #586e72;
+  --gsh-accent: #147d75;
+  --gsh-line: #dce6e1;
+  max-width: 1040px;
+  margin: 0 auto;
+  overflow: hidden;
+  color: var(--gsh-ink);
+  text-align: left;
+  background: #fcfcf9;
+  border: 1px solid var(--gsh-line);
+  border-radius: 18px;
+}
+#method-hero * { box-sizing: border-box; }
+.gsh-head, .gsh-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.gsh-head { padding: 22px 30px 8px; }
+.gsh-kicker, .gsh-example, .gsh-scene-note, .gsh-state { font: 600 10px/1.5 ui-monospace, Menlo, monospace; }
+.gsh-kicker { text-transform: uppercase; letter-spacing: .13em; color: var(--gsh-accent); }
+.gsh-example, .gsh-scene-note, .gsh-state { color: var(--gsh-muted); }
+.gsh-question { padding: 0 30px; font-size: clamp(18px,2.3vw,27px); font-weight: 590; line-height: 1.33; letter-spacing: -.035em; }
+.gsh-body { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 12px; padding: 14px 28px 17px 6px; }
+.gsh-scene { align-self: center; min-width: 0; }
+.gsh-scene svg { display: block; width: 100%; max-height: 298px; }
+.gsh-scene-note { text-align: center; font-size: 10px; font-weight: 450; }
+.gsh-scene-note span { padding: 0 5px; }
+.gsh-axis { font: 9px ui-monospace, Menlo, monospace; fill: #728b85; }
+.gsh-labels, .gsh-heights { font: 600 13px system-ui, sans-serif; }
+.gsh-heights { font: 11px ui-monospace, Menlo, monospace; }
+.gsh-bounds, .gsh-heights, .gsh-samples { transition: opacity .6s; }
+.gsh-bounds { opacity: .94; }
+#method-hero[data-phase="0"] .gsh-bounds { opacity: .14; }
+#method-hero:not([data-phase="2"]) .gsh-heights { opacity: 0; }
+#method-hero:not([data-phase="0"]) .gsh-samples { opacity: 0; }
+#method-hero[data-phase="0"] .gsh-samples circle { animation: gsh-sample 1.8s ease-in-out infinite alternate; }
+#method-hero[data-phase="1"] .gsh-bounds polygon { animation: gsh-outline 1.35s ease-out both; }
+@keyframes gsh-sample { from { opacity: .25; } to { opacity: .95; } }
+@keyframes gsh-outline { from { stroke-dasharray: 300; stroke-dashoffset: 300; } to { stroke-dasharray: 300; stroke-dashoffset: 0; } }
+#method-hero[data-playing="false"] .gsh-samples circle { animation: none; }
+.gsh-trace { border-left: 1px solid var(--gsh-line); padding: 9px 0 9px 25px; }
+.gsh-trace > .gsh-kicker { margin-bottom: 12px; }
+.gsh-step { padding: 5px 0; }
+.gsh-step button, .gsh-play { font-family: inherit; cursor: pointer; color: var(--gsh-muted); }
+.gsh-step button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 0; padding: 3px 0; background: transparent; font-size: 14px; line-height: 1.5; font-weight: 550; }
+.gsh-step button:hover, .gsh-step button[aria-pressed="true"] { color: var(--gsh-accent); }
+.gsh-num { flex: 0 0 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; color: #586f6c; background: #edf2ef; font: 550 10px/1 ui-monospace, Menlo, monospace; }
+.gsh-step button[aria-pressed="true"] .gsh-num { color: white; background: var(--gsh-accent); }
+.gsh-description { display: none; margin: 4px 0 2px 34px; color: var(--gsh-muted); font-size: 12px; line-height: 1.65; }
+.gsh-step button[aria-pressed="true"] + .gsh-description { display: block; }
+.gsh-readout { margin-top: 10px; padding: 9px 12px; min-height: 50px; color: #315956; background: #eff5f1; border-radius: 6px; font: 11px/1.55 ui-monospace, Menlo, monospace; }
+.gsh-readout strong, .gsh-readout b { color: #226a63; }
+.gsh-foot { border-top: 1px solid var(--gsh-line); padding: 9px 27px; }
+.gsh-play { border: 1px solid #ccd9d3; border-radius: 12px; padding: 4px 11px; background: #fff; font-size: 11px; line-height: 1.4; }
+#method-hero button:focus-visible { outline: 2px solid var(--gsh-accent); outline-offset: 3px; }
+@media (max-width: 720px) {
+  .gsh-head { padding: 17px 18px 7px; }
+  .gsh-question { padding: 0 18px; }
+  .gsh-body { grid-template-columns: 1fr; gap: 10px; padding: 10px 18px 16px; }
+  .gsh-scene svg { max-height: 235px; }
+  .gsh-trace { border-left: 0; border-top: 1px solid var(--gsh-line); padding: 14px 0 0; }
+  .gsh-foot { padding: 8px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #method-hero *, #method-hero *::after { animation: none !important; transition: none !important; }
+}
+.gsh-takeaway{margin:7px 30px 0;color:var(--gsh-muted);font-size:14px;line-height:1.55}
+@media(max-width:720px){.gsh-takeaway{margin-inline:18px}}

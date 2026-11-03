@@ -9,7 +9,7 @@
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.js-ready .reveal:not(.visible){opacity:1;transform:none}}
 .wordmark sup{transform:translateY(-.45em)}
 
-/* Paper resource buttons: one active link and two explicitly unavailable resources. */
+/* Paper resource buttons: active paper links and upcoming code. */
 .resource-links{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:22px;pointer-events:auto}
 .resource-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 17px;border:1px solid transparent;border-radius:24px;font:inherit;font-size:12px;font-weight:550;line-height:20px;letter-spacing:.05px;white-space:nowrap;transition:background .2s,box-shadow .2s,transform .2s}
 .resource-icon{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
@@ -17,7 +17,8 @@
 .resource-external{font-size:13px;margin-left:3px;opacity:.75}
 .resource-pdf{background:#176c7b;border-color:#176c7b;color:#fff;box-shadow:0 3px 12px #0f819512}
 .resource-pdf:hover{background:#125967;border-color:#125967;transform:translateY(-2px);box-shadow:0 6px 18px #0f819522}
-.resource-arxiv{background:#f6eeeb;border-color:#e8d9d3;color:#9a7c72}
+.resource-arxiv{background:#f6eeeb;border-color:#e8d9d3;color:#824436}
+.resource-arxiv:hover{background:#f1e1dc;border-color:#cdaaa0}
 .resource-code{background:#f0edf5;border-color:#dfd9e9;color:#898099}
 .resource-button:disabled{cursor:not-allowed;box-shadow:none;transform:none}
 .hero-actions{margin-top:12px;gap:26px}
